@@ -1,12 +1,30 @@
-/**
- * Punto de entrada del servidor
- * Los estudiantes deben completar la configuración del servidor Express
- */
+const express = require("express")
+const app = express()
 
-const app = require("./src/app");
+process.loadEnvFile()
+const PORT = process.env.PORT || 3000
+const sequelize = require('./src/config/database')
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json())
 
-// TODO: Configurar el servidor para escuchar en el puerto especificado
-// TODO: Agregar manejo de errores del servidor
-// TODO: Agregar logs de inicio del servidor
+app.get('/', async (req, res) => {
+ try {
+    await sequelize.authenticate()
+    res.send('Conexión exitosa a la base de datos')
+ } catch (error) {
+    console.error('Error de conexión a la base de datos:', error)
+
+ }
+})
+
+// Establecer conexión del servidor
+app.listen(PORT, () => {
+ try {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`)
+ } catch (error) {
+    console.error('Error al iniciar el servidor:', error)
+ }
+})
+
+
+
