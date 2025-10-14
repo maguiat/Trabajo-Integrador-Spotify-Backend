@@ -1,22 +1,35 @@
-/**
- * Configuración principal de la aplicación Express
- * Los estudiantes deben completar la configuración de middlewares y rutas
- */
 
-const express = require("express");
+const express = require("express")
+const routes = require("./routes")
+const sequelize = require("./config/database")
 
-// TODO: Importar las rutas
+const app = express()
 
-const app = express();
+app.use(express.json())
 
-// TODO: Configurar parseo de JSON
-// Ejemplo: app.use(express.json());
 
-// TODO: Configurar rutas
-// Ejemplo: app.use('/api/v1/usuarios', usuariosRoutes);
+let dbOK = false
+app.use(async (req, res, next) => {
+    try {
+        if (!dbOK) {
+            await sequelize.authenticate()
+            dbOK = true
+            console.log('Conexión exitosa a la base de datos')
+        }
+        next()
+    } catch (error) {
+        console.log('Error de conexión a la base de datos:', error)
+        res.status(500).json({ error: "Error de conexión a la base de datos" })
+    } 
+})
 
-// TODO: Configurar middleware de manejo de errores (debe ir al final)
+// Rutas
+app.use('/api/v1', routes)
 
-// TODO: Configurar ruta 404
+// Manejo de rutas no encontradas
+app.use((req, res, next) => {
+  res.status(404).json({ error: "Recurso no encontrado" })
+})
 
-module.exports = app;
+
+module.exports = app
