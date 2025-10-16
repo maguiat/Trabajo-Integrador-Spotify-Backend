@@ -3,5 +3,11 @@
  * Los estudiantes deben implementar todas las rutas relacionadas con usuarios
  */
 
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
+const usuariosController = require("../controllers/usuariosController")
+
+// Ruta para listar usuarios
+router.get("/", usuariosController.getAllUsuarios)
+
+module.exports = router
