@@ -1,7 +1,7 @@
 const express = require("express")
 const app = require('./src/app')
 const PORT = process.env.PORT || 3000
-const sequelize = require('./src/config/database')
+const chalk = require("chalk")
 
 process.loadEnvFile()
 
@@ -10,9 +10,9 @@ app.use(express.json())
 // Establecer conexión del servidor
 app.listen(PORT, () => {
  try {
-    console.log(`Servidor corriendo en http://localhost:${PORT}`)
+    console.log(chalk.blue.bold(`🚀 Servidor corriendo en http://localhost:${PORT}`))
  } catch (error) {
-    console.error('Error al iniciar el servidor:', error)
+    console.log(chalk.red.bold(`Error al iniciar el servidor: ${error}`))
  }
 })
 
