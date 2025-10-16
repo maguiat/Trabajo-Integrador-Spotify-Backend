@@ -9,5 +9,6 @@ const usuariosController = require("../controllers/usuariosController")
 
 // Ruta para listar usuarios
 router.get("/", usuariosController.getAllUsuarios)
+router.get("/:id", usuariosController.getUsuarioByID)
 
 module.exports = router
