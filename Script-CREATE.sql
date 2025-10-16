@@ -14,6 +14,7 @@ CREATE TABLE tipo_usuario (
 
 CREATE TABLE usuario (
 	id_usuario INT PRIMARY KEY AUTO_INCREMENT,
+    nyap VARCHAR(50) NOT NULL,
     email VARCHAR(50) UNIQUE NOT NULL,
     password_hash VARCHAR(255) NOT NULL,
     fecha_nac DATE NOT NULL,

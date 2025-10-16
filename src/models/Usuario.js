@@ -7,6 +7,10 @@ const Usuario = sequelize.define('usuario', {
         primaryKey: true,
         autoIncrement: true,
     },
+    nyap: {
+        type: DataTypes.STRING(50),
+        allowNull: false,
+    },
     email: {
         type: DataTypes.STRING(50),
         allowNull: false,

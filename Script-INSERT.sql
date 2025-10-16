@@ -24,26 +24,26 @@ INSERT INTO tipo_usuario (nombre_tipo) VALUES
 ('premium');
 
 -- INSERTAR USUARIOS
-INSERT INTO usuario (email, password_hash, fecha_nac, sexo, cp, id_pais, tipo_usuario_actual) VALUES
-('MORTIZ@mail.com', 'hash_password_1', '1975-09-27', 'F', '1001', 1, 3),
-('IBALLESTEROS@mail.com', 'hash_password_2', '1987-10-17', 'F', '1001', 1, 3),
-('CRAMIREZ@mail.com', 'hash_password_3', '1994-08-26', 'F', '1001', 1, 3),
-('MGONZALEZ@mail.com', 'hash_password_4', '1981-03-27', 'F', '118942', 4, 3),
-('EHERNANDEZ@mail.com', 'hash_password_5', '2001-02-10', 'F', '118942', 4, 3),
-('LGOMEZ@mail.com', 'hash_password_6', '1971-12-12', 'F', '118942', 4, 2),
-('MSOSA@mail.com', 'hash_password_7', '1981-07-16', 'F', '3', 5, 2),
-('MSMITH@mail.com', 'hash_password_8', '2000-05-04', 'F', 'B24', 3, 2),
-('PSOTO@mail.com', 'hash_password_9', '1974-07-12', 'F', '832 0000', 6, 1),
-('AGARCIA@mail.com', 'hash_password_10', '1995-08-30', 'M', '1001', 1, 3),
-('JMARTINEZ@mail.com', 'hash_password_11', '1987-11-22', 'M', '1001', 1, 2),
-('FLOPEZ@mail.com', 'hash_password_12', '1988-02-16', 'M', '1001', 1, 1),
-('JSANCHEZ@mail.com', 'hash_password_13', '2003-03-23', 'M', '1001', 1, 1),
-('MRODRIGUEZ@mail.com', 'hash_password_14', '2003-10-16', 'M', '118942', 4, 2),
-('JDIAZ@mail.com', 'hash_password_15', '1973-05-23', 'M', '118942', 4, 3),
-('JLOPEZ@mail.com', 'hash_password_16', '1974-03-15', 'M', '118942', 4, 2),
-('SMARTINEZ@mail.com', 'hash_password_17', '1977-07-18', 'M', '118942', 4, 2),
-('DRUBIO@mail.com', 'hash_password_18', '2001-01-17', 'M', '60000', 9, 2),
-('JWATSON@mail.com', 'hash_password_19', '2003-10-22', 'M', '10029', 2, 1);
+INSERT INTO usuario (nyap, email, password_hash, fecha_nac, sexo, cp, id_pais, tipo_usuario_actual, fecha_ult_mod_password) VALUES
+('Marta Ortiz', 'MORTIZ@mail.com', 'DUMMY_HASH_MORTIZ@MAIL.COM', '1975-09-27', 'F', '1001', 1, 3, '2023-01-01 00:00:00'),
+('Irene Ballesteros', 'IBALLESTEROS@mail.com', 'DUMMY_HASH_IBALLESTEROS@MAIL.COM', '1987-10-17', 'F', '1001', 1, 3, '2023-01-01 00:00:00'),
+('Camila Ramirez', 'CRAMIREZ@mail.com', 'DUMMY_HASH_CRAMIREZ@MAIL.COM', '1994-08-26', 'F', '1001', 1, 3, '2023-01-01 00:00:00'),
+('Manuela Gonzalez', 'MGONZALEZ@mail.com', 'DUMMY_HASH_MGONZALEZ@MAIL.COM', '1981-03-27', 'F', '118942', 4, 3, '2023-01-01 00:00:00'),
+('Elena Hernandez', 'EHERNANDEZ@mail.com', 'DUMMY_HASH_EHERNANDEZ@MAIL.COM', '2001-02-10', 'F', '118942', 4, 3, '2023-01-01 00:00:00'),
+('Laura Gomez', 'LGOMEZ@mail.com', 'DUMMY_HASH_LGOMEZ@MAIL.COM', '1971-12-12', 'F', '118942', 4, 2, '2023-01-01 00:00:00'),
+('Mercedes Sosa', 'MSOSA@mail.com', 'DUMMY_HASH_MSOSA@MAIL.COM', '1981-07-16', 'F', '3', 5, 2, '2023-01-01 00:00:00'),
+('María Smith', 'MSMITH@mail.com', 'DUMMY_HASH_MSMITH@MAIL.COM', '2000-05-04', 'F', 'B24', 3, 2, '2023-01-01 00:00:00'),
+('Paula Soto', 'PSOTO@mail.com', 'DUMMY_HASH_PSOTO@MAIL.COM', '1974-07-12', 'F', '832 0000', 6, 1, '2023-01-01 00:00:00'),
+('Andres Garcia', 'AGARCIA@mail.com', 'DUMMY_HASH_AGARCIA@MAIL.COM', '1995-08-30', 'M', '1001', 1, 3, '2023-01-01 00:00:00'),
+('Javier Martinez', 'JMARTINEZ@mail.com', 'DUMMY_HASH_JMARTINEZ@MAIL.COM', '1987-11-22', 'M', '1001', 1, 2, '2023-01-01 00:00:00'),
+('Fabian Lopez', 'FLOPEZ@mail.com', 'DUMMY_HASH_FLOPEZ@MAIL.COM', '1988-02-16', 'M', '1001', 1, 1, '2023-01-01 00:00:00'),
+('Juan Sanchez', 'JSANCHEZ@mail.com', 'DUMMY_HASH_JSANCHEZ@MAIL.COM', '2003-03-23', 'M', '1001', 1, 1, '2023-01-01 00:00:00'),
+('Manuel Rodriguez', 'MRODRIGUEZ@mail.com', 'DUMMY_HASH_MRODRIGUEZ@MAIL.COM', '2003-10-16', 'M', '118942', 4, 2, '2023-01-01 00:00:00'),
+('Jorge Diaz', 'JDIAZ@mail.com', 'DUMMY_HASH_JDIAZ@MAIL.COM', '1973-05-23', 'M', '118942', 4, 3, '2023-01-01 00:00:00'),
+('Joaquin Lopez', 'JLOPEZ@mail.com', 'DUMMY_HASH_JLOPEZ@MAIL.COM', '1974-03-15', 'M', '118942', 4, 2, '2023-01-01 00:00:00'),
+('Sergio Martinez', 'SMARTINEZ@mail.com', 'DUMMY_HASH_SMARTINEZ@MAIL.COM', '1977-07-18', 'M', '118942', 4, 2, '2023-01-01 00:00:00'),
+('David Rubio', 'DRUBIO@mail.com', 'DUMMY_HASH_DRUBIO@MAIL.COM', '2001-01-17', 'M', '60000', 9, 2, '2023-01-01 00:00:00'),
+('James Watson', 'JWATSON@mail.com', 'DUMMY_HASH_JWATSON@MAIL.COM', '2003-10-22', 'M', '10029', 2, 1, '2023-01-01 00:00:00');
 
 -- INSERTAR ARTISTAS
 INSERT INTO artista (nombre, imagen_url) VALUES
