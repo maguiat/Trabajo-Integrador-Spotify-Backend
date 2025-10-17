@@ -16,8 +16,8 @@ getAllUsuarios = async (req, res) => {
     res.json(usuarios)
     console.log(chalk.green(`Usuarios obtenidos correctamente`))
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener usuarios: " + error })
-    console.log(chalk.red(`Error al obtener usuarios: ${error}`))
+    res.status(500).json({ error: "Error en el servidor: " + error })
+    console.log(chalk.red(`Error en el servidor: ${error}`))
   }
 }
 
@@ -34,13 +34,13 @@ getUsuarioByID = async (req, res) => {
     res.json(usuario)
     console.log(chalk.green(`Usuario obtenido correctamente`))
   } catch (error) {
-    res.status(500).json({ error: "Error al obtener el usuario: " + error })
-    console.log(chalk.red(`Error al obtener el usuario: ${error}`))
+    res.status(500).json({ error: "Error en el servidor: " + error })
+    console.log(chalk.red(`Error en el servidor: ${error}`))
   }
 }
-
+  
 module.exports = {
   getAllUsuarios,
-  getUsuarioByID,
+  getUsuarioByID
 }
 
