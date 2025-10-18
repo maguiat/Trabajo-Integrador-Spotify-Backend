@@ -2,6 +2,7 @@ const { Op } = require("sequelize")
 const Usuario = require("../models/Usuario")
 const chalk = require("chalk")
 const bcrypt = require("bcrypt")
+process.loadEnvFile()
 
 // GET /usuarios (lista)
 getAllUsuarios = async (req, res) => {
@@ -89,7 +90,7 @@ crearUsuario = async (req, res) => {
     }
 
     // Hash de contraseña
-    const hashPassword = await bcrypt.hash(password, 10)
+    const hashPassword = await bcrypt.hash(password, +process.env.SALT_ROUNDS)
 
     // Crear usuario
     const usuario = await Usuario.create({
@@ -112,8 +113,45 @@ crearUsuario = async (req, res) => {
   }
 }
 
+// PUT /usuarios/:id (actualizar)
+updateUsuario = async (req, res) => {
+  // Implementación pendiente
+}
+
+
+// DELETE /usuarios/:id (eliminar) 
+deleteUsuario = async (req, res) => {
+  const { id } = req.params
+  try {
+    const usuario = await Usuario.findByPk(id)
+    if (!usuario) {
+      res.status(404).json({ message: "No se encontró el usuario" })
+      console.log(chalk.yellow("No se encontró el usuario"))
+      return
+    }
+
+    const nyap = usuario.nyap
+
+    await usuario.destroy()
+    res.status(200).json({ message: `Usuario ${nyap} eliminado correctamente` })
+    console.log(chalk.green(`Usuario ${nyap} eliminado correctamente`))
+  } catch (error) { 
+    res.status(500).json({ error: "Error en el servidor: " + error })
+    console.log(chalk.red(`Error en el servidor: ${error}`))
+  }
+}
+
+// GET /usuarios/password-vencidas 
+getUsuariosPasswordVencidas = async (req, res) => {
+  // Implementación pendiente
+}
+
 module.exports = {
   getAllUsuarios,
   getUsuarioByID,
   crearUsuario,
+  updateUsuario,
+  deleteUsuario,
+  getUsuariosPasswordVencidas
 }
+ 
