@@ -4,12 +4,12 @@ USE Spotify;
 
 CREATE TABLE pais( 
 	id_pais INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_pais VARCHAR(50) NOT NULL UNIQUE
+    nombre_pais VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE tipo_usuario (
 	id_tipo_usuario INT PRIMARY KEY AUTO_INCREMENT,
-    nombre_tipo ENUM('free', 'standard', 'premium') NOT NULL UNIQUE
+    nombre_tipo VARCHAR(20) NOT NULL UNIQUE
 );
 
 CREATE TABLE usuario (
@@ -115,7 +115,7 @@ CREATE TABLE suscripcion (
 CREATE TABLE metodo_pago (
 	id_metodo_pago INT PRIMARY KEY AUTO_INCREMENT,
     id_usuario INT NOT NULL,
-    tipo_forma_pago ENUM('Credito', 'Debito', 'Efectivo', 'Debito Automatico x Banco') NOT NULL,
+    tipo_forma_pago VARCHAR(50) NOT NULL,
     cbu VARCHAR(20) NULL,
     banco_codigo INT,
     nro_tarjeta_masc VARCHAR(20) NOT NULL,
@@ -135,6 +135,7 @@ CREATE TABLE pago (
     FOREIGN KEY (id_suscripcion) REFERENCES suscripcion(id_suscripcion),
     FOREIGN KEY (id_metodo_pago) REFERENCES metodo_pago(id_metodo_pago)
 );
+
 
 -- INSERTAR PAÍSES
 INSERT INTO pais (nombre_pais) VALUES 
@@ -180,7 +181,6 @@ INSERT INTO usuario (nyap, email, password_hash, fecha_nac, sexo, cp, id_pais, t
 ('Sergio Martinez', 'SMARTINEZ@mail.com', 'DUMMY_HASH_SMARTINEZ@MAIL.COM', '1977-07-18', 'M', '118942', 4, 2, '2023-01-01 00:00:00'),
 ('David Rubio', 'DRUBIO@mail.com', 'DUMMY_HASH_DRUBIO@MAIL.COM', '2001-01-17', 'M', '60000', 9, 2, '2023-01-01 00:00:00'),
 ('James Watson', 'JWATSON@mail.com', 'DUMMY_HASH_JWATSON@MAIL.COM', '2003-10-22', 'M', '10029', 2, 1, '2023-01-01 00:00:00');
-
 -- INSERTAR ARTISTAS
 INSERT INTO artista (nombre, imagen_url) VALUES
 ('Pink Floyd', 'Pink Floyd.jpg'),
