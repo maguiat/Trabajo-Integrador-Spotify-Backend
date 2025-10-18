@@ -44,7 +44,6 @@ const Usuario = sequelize.define('usuario', {
     },
     fecha_ult_mod_password: {
         type: DataTypes.DATEONLY,
-        allowNull: false,
     },
 
 }, {

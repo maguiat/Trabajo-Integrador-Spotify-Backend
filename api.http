@@ -11,6 +11,7 @@ POST {{baseUrl}}/usuarios
 Content-Type: {{json}}
 
 {
+  "nyap": "Ana García", // Se agregó este campo
   "email": "ana.garcia@example.com",
   "password": "Secr3t0!",
   "fecha_nac": "1995-05-20",

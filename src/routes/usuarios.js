@@ -10,5 +10,6 @@ const usuariosController = require("../controllers/usuariosController")
 // Ruta para listar usuarios
 router.get("/", usuariosController.getAllUsuarios)
 router.get("/:id", usuariosController.getUsuarioByID)
+router.post("/", usuariosController.crearUsuario)
 
 module.exports = router

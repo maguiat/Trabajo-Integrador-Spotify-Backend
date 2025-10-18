@@ -1,6 +1,7 @@
 const { Op } = require("sequelize")
 const Usuario = require("../models/Usuario")
 const chalk = require("chalk")
+const bcrypt = require("bcrypt")
 
 // GET /usuarios (lista)
 getAllUsuarios = async (req, res) => {
@@ -38,9 +39,81 @@ getUsuarioByID = async (req, res) => {
     console.log(chalk.red(`Error en el servidor: ${error}`))
   }
 }
-  
-module.exports = {
-  getAllUsuarios,
-  getUsuarioByID
+
+// POST /usuarios (crear)
+crearUsuario = async (req, res) => {
+  try {
+    const {
+      nyap,
+      email,
+      password,
+      fecha_nac,
+      sexo,
+      cp,
+      id_pais,
+      tipo_usuario_actual,
+    } = req.body
+
+    // Validar si falta algún campo
+    const camposRequeridos = [
+      "nyap",
+      "email",
+      "password",
+      "fecha_nac",
+      "sexo",
+      "cp",
+      "id_pais",
+      "tipo_usuario_actual",
+    ]
+     // Filtrar campos faltantes
+    const camposFaltantes = camposRequeridos.filter(
+      (campo) => !req.body[campo]
+    )
+
+    if (camposFaltantes.length > 0) {
+      res
+        .status(400)
+        .json({
+          error: "[ERROR] Faltan campos requeridos: " + camposFaltantes,
+        })
+      console.log(chalk.red(`Faltan campos requeridos: ${camposFaltantes}`))
+      return
+    }
+
+    // Validar si el email ya existe
+    const emailExiste = await Usuario.findOne({where: { email }})
+    if (emailExiste) {
+      res.status(400).json({ error: "El email ya está registrado" })
+      console.log(chalk.red(`Email existente`))
+      return
+    }
+
+    // Hash de contraseña
+    const hashPassword = await bcrypt.hash(password, 10)
+
+    // Crear usuario
+    const usuario = await Usuario.create({
+      nyap,
+      email,
+      password_hash: hashPassword,
+      fecha_nac,
+      sexo,
+      cp,
+      id_pais,
+      tipo_usuario_actual,
+    })
+
+    // res status message 
+    res.status(201).json({ message: "Usuario creado correctamente", usuario })
+    console.log(chalk.green(`Usuario creado correctamente`))
+  } catch (error) {
+    res.status(500).json({ error: "Error en el servidor: " + error })
+    console.log(chalk.red(`Error en el servidor: ${error}`))
+  }
 }
 
+module.exports = {
+  getAllUsuarios,
+  getUsuarioByID,
+  crearUsuario,
+}
