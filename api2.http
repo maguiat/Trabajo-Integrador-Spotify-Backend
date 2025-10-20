@@ -1,0 +1,51 @@
+
+### VARIABLES GLOBALES
+@baseUrl = http://localhost:3000/api/v1
+@json = application/json
+
+### Crear usuario
+POST {{baseUrl}}/usuarios
+Content-Type: {{json}}
+
+{
+  "nyap": "Juan Pérez", 
+  "email": "juan.perez@example.com",
+  "password": "Secr3t0!",
+  "fecha_nac": "1995-05-20",
+  "sexo": "M",
+  "cp": "4600",
+  "id_pais": 10,
+  "tipo_usuario_actual": 1
+}
+
+### Eliminar usuario por ID
+DELETE {{baseUrl}}/usuarios/23
+
+
+### ==========================
+### ALBUMES
+### ==========================
+
+### Listar albumes
+GET {{baseUrl}}/albumes
+
+### Listar albumes filtrados
+GET {{baseUrl}}/albumes?artistaId=5
+
+### Listar albumes con búsqueda
+GET {{baseUrl}}/albumes?q=Love
+
+### Listar canciones de un album
+GET {{baseUrl}}/albumes/1/canciones
+
+### Crear album
+POST {{baseUrl}}/albumes
+Content-Type: {{json}}
+
+{
+  "titulo": "El Amo Después Del Amor",
+  "id_artista": 1,
+  "id_discografica": 4,
+  "anio_publicacion": 1992,
+  "duracion_total_seg": 3600
+}

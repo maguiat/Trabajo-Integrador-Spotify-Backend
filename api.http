@@ -10,8 +10,9 @@
 POST {{baseUrl}}/usuarios
 Content-Type: {{json}}
 
+# Se agregó el campo "nyap"
 {
-  "nyap": "Ana García", // Se agregó este campo
+  "nyap": "Ana García", 
   "email": "ana.garcia@example.com",
   "password": "Secr3t0!",
   "fecha_nac": "1995-05-20",
@@ -37,7 +38,7 @@ GET {{baseUrl}}/usuarios?page=1&limit=20
 GET {{baseUrl}}/usuarios/1
 
 ### Actualizar usuario (cambio de password → actualiza fecha_ult_mod_password)
-PUT {{baseUrl}}/usuarios/1
+PUT {{baseUrl}}/usuarios/2
 Content-Type: {{json}}
 
 {

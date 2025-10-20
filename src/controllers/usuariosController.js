@@ -104,7 +104,6 @@ crearUsuario = async (req, res) => {
       tipo_usuario_actual,
     })
 
-    // res status message 
     res.status(201).json({ message: "Usuario creado correctamente", usuario })
     console.log(chalk.green(`Usuario creado correctamente`))
   } catch (error) {
