@@ -38,7 +38,38 @@ getArtistaByID = async (req, res) => {
   }
 }
 
+// POST /artistas (crear)
+crearArtista = async (req, res) => {
+  try {
+    const {
+      nombre,
+      imagen_url,
+    } = req.body
+
+    // Validar nombre único 
+    const nombreExiste = await Artista.findOne({where: { nombre }})
+    if (nombreExiste) {
+      res.status(400).json({ error: "El nombre ya está registrado" })
+      console.log(chalk.red(`Nombre existente`))
+      return
+    }
+
+    // Crear artista
+    const artista = await Artista.create({
+      nombre,
+      imagen_url,
+    })
+
+    res.status(201).json({ message: "Artista creado correctamente", artista })
+    console.log(chalk.green(`Artista creado correctamente`))
+  } catch (error) {
+    res.status(500).json({ error: "Error en el servidor: " + error })
+    console.log(chalk.red(`Error en el servidor: ${error}`))
+  }
+}
+
 module.exports = {
     getAllArtistas,
-    getArtistaByID
+    getArtistaByID,
+    crearArtista,
 }
