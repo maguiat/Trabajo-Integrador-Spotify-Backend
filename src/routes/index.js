@@ -9,7 +9,7 @@ const router = express.Router();
 // TODO: Importar todas las rutas
 const usuariosRoutes = require('./usuarios');
 const artistasRoutes = require('./artistas');
-// const albumesRoutes = require('./albumes');
+const albumesRoutes = require('./albumes');
 // const cancionesRoutes = require('./canciones');
 // const generosRoutes = require('./generos');
 // const playlistsRoutes = require('./playlists');
@@ -21,7 +21,7 @@ const artistasRoutes = require('./artistas');
 // TODO: Configurar las rutas con sus prefijos
 router.use('/usuarios', usuariosRoutes);
 router.use('/artistas', artistasRoutes);
-// router.use('/albumes', albumesRoutes);
+router.use('/albumes', albumesRoutes);
 // router.use('/canciones', cancionesRoutes);
 // router.use('/generos', generosRoutes);
 // router.use('/playlists', playlistsRoutes);

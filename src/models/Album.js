@@ -10,7 +10,6 @@ const Album = sequelize.define('album', {
     titulo: {
         type: DataTypes.STRING(50),
         allowNull: false,
-        unique: true,
     },
     // FK
     id_artista: {
@@ -24,19 +23,25 @@ const Album = sequelize.define('album', {
     },
     imagen_portada: {
         type: DataTypes.STRING(255),
-        allowNull: false,
+        allowNull: true,
     },
     anio_publicacion: {
-        type: DataTypes.DATEONLY,
+        type: DataTypes.INTEGER,
         allowNull: false,
     },
     duracion_total_seg: {
         type: DataTypes.INTEGER,
-        allowNull: false,
+        allowNull: true,
     },
 }, {
     tableName: 'album',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+        {
+            unique: true,
+            fields: ['titulo', 'id_artista']
+        }
+    ]
 })
 
 module.exports = Album
