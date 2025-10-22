@@ -3,32 +3,32 @@
  * Los estudiantes deben importar y configurar todas las rutas aquí
  */
 
-const express = require("express");
-const router = express.Router();
+const express = require("express")
+const router = express.Router()
 
 // TODO: Importar todas las rutas
-const usuariosRoutes = require('./usuarios');
-const artistasRoutes = require('./artistas');
-const albumesRoutes = require('./albumes');
-const cancionesRoutes = require('./canciones');
-// const generosRoutes = require('./generos');
-// const playlistsRoutes = require('./playlists');
-// const suscripcionesRoutes = require('./suscripciones');
-// const metodosPagoRoutes = require('./metodos-pago');
-// const pagosRoutes = require('./pagos');
-// const vistasRoutes = require('./vistas');
+const usuariosRoutes = require('./usuarios')
+const artistasRoutes = require('./artistas')
+const albumesRoutes = require('./albumes')
+const cancionesRoutes = require('./canciones')
+const generosRoutes = require('./generos')
+// const playlistsRoutes = require('./playlists')
+// const suscripcionesRoutes = require('./suscripciones')
+// const metodosPagoRoutes = require('./metodos-pago')
+// const pagosRoutes = require('./pagos')
+// const vistasRoutes = require('./vistas')
 
 // TODO: Configurar las rutas con sus prefijos
-router.use('/usuarios', usuariosRoutes);
-router.use('/artistas', artistasRoutes);
-router.use('/albumes', albumesRoutes);
-router.use('/canciones', cancionesRoutes);
-// router.use('/generos', generosRoutes);
-// router.use('/playlists', playlistsRoutes);
-// router.use('/suscripciones', suscripcionesRoutes);
-// router.use('/metodos-pago', metodosPagoRoutes);
-// router.use('/pagos', pagosRoutes);
-// router.use('/vistas', vistasRoutes);
+router.use('/usuarios', usuariosRoutes)
+router.use('/artistas', artistasRoutes)
+router.use('/albumes', albumesRoutes)
+router.use('/canciones', cancionesRoutes)
+router.use('/generos', generosRoutes)
+// router.use('/playlists', playlistsRoutes)
+// router.use('/suscripciones', suscripcionesRoutes)
+// router.use('/metodos-pago', metodosPagoRoutes)
+// router.use('/pagos', pagosRoutes)
+// router.use('/vistas', vistasRoutes)
 
 // Ruta de prueba
 router.get("/", (req, res) => {
@@ -47,7 +47,7 @@ router.get("/", (req, res) => {
       pagos: "/api/v1/pagos",
       vistas: "/api/v1/vistas",
     },
-  });
-});
+  })
+})
 
-module.exports = router;
+module.exports = router
