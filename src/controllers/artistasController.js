@@ -7,16 +7,18 @@ getAllArtistas = async (req, res) => {
     const artistas = await Artista.findAll({
       order: [["id_artista", "DESC"]],
     })
+
+    // --- Validar si hay artistas ---
     if (artistas.length === 0) {
-      res.status(404).json({ message: "No se encontraron artistas" })
       console.log(chalk.yellow("No se encontraron artistas"))
-      return
+      return res.status(404).json({ message: "No se encontraron artistas" })
     }
-    res.json(artistas)
+
+    // --- Devolver resultados ---
     console.log(chalk.green(`Artistas obtenidos correctamente`))
+    return res.status(200).json(artistas)
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 
@@ -25,16 +27,18 @@ getArtistaByID = async (req, res) => {
   const { id } = req.params
   try {
     const artista = await Artista.findByPk(id)
+
+    // --- Validar que el artista exista ---
     if (!artista) {
-      res.status(404).json({ message: "No se encontró el artista" })
       console.log(chalk.yellow("No se encontró el artista"))
-      return
+      return res.status(404).json({ message: "No se encontró el artista" })
     }
-    res.json(artista)
+    
+    // --- Devolver resultados ---
     console.log(chalk.green(`Artista obtenido correctamente`))
+    return res.status(200).json(artista)
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 
@@ -46,25 +50,24 @@ crearArtista = async (req, res) => {
       imagen_url,
     } = req.body
 
-    // Validar nombre único 
+    // --- Validar si el nombre ya existe ---
     const nombreExiste = await Artista.findOne({where: { nombre }})
     if (nombreExiste) {
-      res.status(400).json({ error: "El nombre ya está registrado" })
       console.log(chalk.red(`Nombre existente`))
-      return
+      return res.status(400).json({ error: "El nombre ya está registrado" })
     }
 
-    // Crear artista
+    // --- Crear artista ---
     const artista = await Artista.create({
       nombre,
       imagen_url,
     })
 
-    res.status(201).json({ message: "Artista creado correctamente", artista })
+    // --- Devolver resultados ---
     console.log(chalk.green(`Artista creado correctamente`))
+    return res.status(201).json({ message: "Artista creado correctamente", artista })
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 

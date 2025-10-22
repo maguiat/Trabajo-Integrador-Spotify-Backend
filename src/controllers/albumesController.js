@@ -8,30 +8,26 @@ getAlbumes = async (req, res) => {
     const { artistaId, query } = req.query 
     const where = {}
 
-    if (artistaId) {
-      where.id_artista = artistaId // filtra por artista
-    }
-
-    if (query) {
-      where.nombre = { [Op.like]: `%${ query }%` } // filtra por coincidencia parcial
-    }
+    // --- Filtrar por artista y coincidencia parcial ---
+    if (artistaId) {where.id_artista = artistaId}
+    if (query) {where.nombre = { [Op.like]: `%${ query }%` }}
 
     const albumes = await Album.findAll({
       where,
       order: [["id_album", "DESC"]],
     })
 
+    // --- Validar si hay álbumes ---
     if (albumes.length === 0) {
-      res.status(404).json({ message: "No se encontraron álbumes" })
       console.log(chalk.yellow("No se encontraron álbumes"))
-      return
+      return res.status(404).json({ message: "No se encontraron álbumes" })
     }
 
-    res.json(albumes)
+    // --- Devolver resultados ---
     console.log(chalk.green(`Álbumes obtenidos correctamente`))
+    return res.status(200).json(albumes)
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 
@@ -40,16 +36,18 @@ getAlbumByID = async (req, res) => {
   const { id } = req.params
   try {
     const album = await Album.findByPk(id)
+
+    // --- Validar que el álbum exista ---
     if (!album) {
-      res.status(404).json({ message: "No se encontró el álbum" })
       console.log(chalk.yellow("No se encontró el álbum"))
-      return
+      return res.status(404).json({ message: "No se encontró el álbum" })
     }
-    res.json(album)
+
+    // --- Devolver resultados ---
     console.log(chalk.green(`Álbum obtenido correctamente`))
+    return res.status(200).json(album)
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 
@@ -62,16 +60,17 @@ getAlbumByIDCanciones = async (req, res) => {
         id_album: id
       }
     })
+    // --- Validar si hay canciones ---
     if (!canciones) {
-      res.status(404).json({ message: "No se encontró el álbum" })
-      console.log(chalk.yellow("No se encontró el albume"))
-      return
+      console.log(chalk.yellow("No se encontraron canciones"))
+      return res.status(404).json({ message: "No se encontraron canciones" })
     }
-    res.json(canciones)
+
+    // --- Devolver resultados ---
     console.log(chalk.green(`Canciones obtenidas correctamente`))
+    return res.status(200).json(canciones)
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    return next(error)
   }
 }
 
@@ -86,29 +85,25 @@ crearAlbum = async (req, res) => {
       duracion_total_seg,
     } = req.body
 
-    // Validar si falta algún campo
+    // --- Validar si falta algún campo ---
     const camposRequeridos = [
       "titulo",
       "id_artista",
       "id_discografica",
       "anio_publicacion",
     ]
-     // Filtrar campos faltantes
+     // --- Filtrar campos faltantes ---
     const camposFaltantes = camposRequeridos.filter(
       (campo) => !req.body[campo]
     )
 
+    // --- Validar si faltan campos ---
     if (camposFaltantes.length > 0) {
-      res
-        .status(400)
-        .json({
-          error: "[ERROR] Faltan campos requeridos: " + camposFaltantes,
-        })
       console.log(chalk.red(`Faltan campos requeridos: ${camposFaltantes}`))
-      return
+      return res.status(400).json({ error: "Faltan campos requeridos: " + camposFaltantes })
     }
 
-    // Crear álbum
+    // --- Crear álbum ---
     const album = await Album.create({
       titulo,
       id_artista,
@@ -117,16 +112,16 @@ crearAlbum = async (req, res) => {
       duracion_total_seg,
     })
 
-    res.status(201).json({ message: "Álbum creado correctamente", album })
+    // --- Devolver resultados ---
     console.log(chalk.green(`Álbum creado correctamente`))
+    return res.status(201).json({ message: "Álbum creado correctamente", album })
   } catch (error) {
       if (error.name === 'SequelizeUniqueConstraintError') {
-        res.status(400).json({ error: "[ERROR]: Ya existe un álbum con ese titulo para este artista" })
+        res.status(400).json({ error: "Ya existe un álbum con ese titulo para este artista" })
         console.log(chalk.red(`Título existente para este artista`))
         return
       }
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+      return next(error)
   }
 }
 
