@@ -3,6 +3,9 @@ const express = require("express")
 const routes = require("./routes")
 const sequelize = require("./config/database")
 const chalk = require("chalk")
+const swaggerUi = require('swagger-ui-express')
+const fs = require('fs')
+const yaml = require('yaml')
 
 const app = express()
 
@@ -23,6 +26,12 @@ app.use(async (req, res, next) => {
         res.status(500).json({ error: "Error de conexión a la base de datos" })
     } 
 })
+
+// Swagger (leer el YAML y mostrarlo)
+const swaggerFile = fs.readFileSync("./src/docs/swagger.yaml", "utf8")
+const swaggerSpec = yaml.parse(swaggerFile)
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerSpec))
+
 
 // Manejo de errores de sintaxis JSON
 app.use((err, req, res, next) => {
