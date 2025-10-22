@@ -1,11 +1,13 @@
 const { Sequelize } = require('sequelize')
 process.loadEnvFile()
+const chalk = require('chalk')
 
 const {DB_NAME, DB_USER, DB_PASSWORD, DB_HOST, DB_PORT} = process.env
 
 const sequelize = new Sequelize(DB_NAME, DB_USER, DB_PASSWORD, {
   host: DB_HOST,
   dialect: 'mysql',
+  logging: false,
   port: DB_PORT
 })
 
