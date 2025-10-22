@@ -19,6 +19,10 @@ const Cancion = sequelize.define('cancion', {
     id_album: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'album',
+            key: 'id_album'
+        }
     },
     reproducciones: {
         type: DataTypes.BIGINT,
@@ -35,7 +39,13 @@ const Cancion = sequelize.define('cancion', {
     },
 }, {
     tableName: 'cancion',
-    timestamps: false
+    timestamps: false,
+    indexes: [
+        {
+            unique: true,
+            fields: ['titulo', 'id_album']
+        }
+    ]
 })
 
 module.exports = Cancion
