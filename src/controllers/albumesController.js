@@ -3,7 +3,7 @@ const chalk = require("chalk")
 const { Op } = require("sequelize")
 
 // GET /albumes (lista)
-getAllAlbumes = async (req, res) => {
+getAlbumes = async (req, res) => {
   try {
     const { artistaId, query } = req.query 
     const where = {}
@@ -131,7 +131,7 @@ crearAlbum = async (req, res) => {
 }
 
 module.exports = {
-  getAllAlbumes,
+  getAlbumes,
   getAlbumByID,
   getAlbumByIDCanciones,
   crearAlbum,

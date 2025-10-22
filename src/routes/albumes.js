@@ -4,7 +4,7 @@ const router = express.Router()
 const albumesController = require("../controllers/albumesController")
 
 // Ruta para listar albumes
-router.get("/", albumesController.getAllAlbumes)
+router.get("/", albumesController.getAlbumes)
 
 // Ruta para obtener un albume por ID
 router.get("/:id", albumesController.getAlbumByID)
