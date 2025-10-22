@@ -2,6 +2,9 @@ const express = require("express")
 const router = express.Router()
 const usuariosController = require("../controllers/usuariosController")
 
+// Ruta para obtener usuarios con password vencidas
+router.get("/password-vencidas", usuariosController.getUsuariosPasswordVencidas)
+
 // Ruta para listar usuarios
 router.get("/", usuariosController.getAllUsuarios)
 
@@ -17,7 +20,6 @@ router.put("/:id", usuariosController.updateUsuario)
 // Ruta para eliminar un usuario
 router.delete("/:id", usuariosController.deleteUsuario)
 
-// Ruta para obtener usuarios con password vencidas
-router.get("/password-vencidas", usuariosController.getUsuariosPasswordVencidas)
+
 
 module.exports = router

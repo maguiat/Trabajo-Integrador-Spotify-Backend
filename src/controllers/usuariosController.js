@@ -5,7 +5,7 @@ const bcrypt = require("bcrypt")
 process.loadEnvFile()
 
 // GET /usuarios (lista)
-getAllUsuarios = async (req, res) => {
+getAllUsuarios = async (req, res, next) => {
   try {
     const usuarios = await Usuario.findAll({
       order: [["id_usuario", "DESC"]],
@@ -27,7 +27,7 @@ getAllUsuarios = async (req, res) => {
 }
 
 // GET /usuarios/:id (detalle)
-getUsuarioByID = async (req, res) => {
+getUsuarioByID = async (req, res, next) => {
   const { id } = req.params
   try {
     const usuario = await Usuario.findByPk(id)
@@ -46,7 +46,7 @@ getUsuarioByID = async (req, res) => {
 }
 
 // POST /usuarios (crear)
-crearUsuario = async (req, res) => {
+crearUsuario = async (req, res, next) => {
   try {
     const {
       nyap,
@@ -60,7 +60,7 @@ crearUsuario = async (req, res) => {
       fecha_ult_mod_password = new Date(),
     } = req.body
 
-    // Validar si falta algún campo
+    // --- Validar si falta algún campo ---
     const camposRequeridos = [
       "nyap",
       "email",
@@ -71,7 +71,7 @@ crearUsuario = async (req, res) => {
       "id_pais",
       "tipo_usuario_actual",
     ]
-     // Filtrar campos faltantes
+     // --- Filtrar campos faltantes ---
     const camposFaltantes = camposRequeridos.filter(
       (campo) => !req.body[campo]
     )
@@ -80,24 +80,23 @@ crearUsuario = async (req, res) => {
       res
         .status(400)
         .json({
-          error: "[ERROR] Faltan campos requeridos: " + camposFaltantes,
+          error: "Faltan campos requeridos: " + camposFaltantes,
         })
       console.log(chalk.red(`Faltan campos requeridos: ${camposFaltantes}`))
       return
     }
 
-    // Validar si el email ya existe
+    // --- Validar si el email ya existe ---
     const emailExiste = await Usuario.findOne({where: { email }})
     if (emailExiste) {
-      res.status(400).json({ error: "El email ya está registrado" })
       console.log(chalk.red(`Email existente`))
-      return
+      return res.status(400).json({ error: "El email ya está registrado" })
     }
 
-    // Hash de contraseña
+    // --- Hash de contraseña ---
     const hashPassword = await bcrypt.hash(password, +process.env.SALT_ROUNDS)
 
-    // Crear usuario
+    // --- Crear usuario ---
     const usuario = await Usuario.create({
       nyap,
       email,
@@ -109,16 +108,16 @@ crearUsuario = async (req, res) => {
       tipo_usuario_actual,
     })
 
-    res.status(201).json({ message: "Usuario creado correctamente", usuario })
+    // --- Devolver resultados ---
     console.log(chalk.green(`Usuario creado correctamente`))
+    res.status(201).json({ message: "Usuario creado correctamente", usuario })
   } catch (error) {
-    res.status(500).json({ error: "Error en el servidor: " + error })
-    console.log(chalk.red(`Error en el servidor: ${error}`))
+    next(error)
   }
 }
 
 // PUT /usuarios/:id (actualizar)
-updateUsuario = async (req, res) => {
+updateUsuario = async (req, res, next) => {
    try {
     const { id } = req.params
     const { nyap, email, fecha_nac, sexo, cp, id_pais, tipo_usuario_actual } = req.body
@@ -154,10 +153,11 @@ updateUsuario = async (req, res) => {
       id_pais,
       tipo_usuario_actual
     })
+    const usuarioActualizado = await Usuario.findByPk(id)
 
     // --- Devolver resultados ---
     console.log(chalk.green(`Usuario ${id} actualizado correctamente`))
-    res.status(200).json({
+    return res.status(200).json({
       message: "Usuario actualizado correctamente",
       usuario: usuarioActualizado
     })
@@ -175,7 +175,7 @@ updateUsuario = async (req, res) => {
 
 
 // DELETE /usuarios/:id (eliminar) 
-deleteUsuario = async (req, res) => {
+deleteUsuario = async (req, res, next) => {
   const { id } = req.params
   try {
     const usuario = await Usuario.findByPk(id)
@@ -199,7 +199,7 @@ deleteUsuario = async (req, res) => {
 }
 
 // GET /usuarios/password-vencidas 
-getUsuariosPasswordVencidas = async (req, res) => {
+getUsuariosPasswordVencidas = async (req, res, next) => {
   try {
     const { dias = 90 } = req.query 
     
