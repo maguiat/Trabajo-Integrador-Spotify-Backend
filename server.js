@@ -11,6 +11,7 @@ app.use(express.json())
 app.listen(PORT, () => {
  try {
     console.log(chalk.blue.bold(`🚀 Servidor corriendo en http://localhost:${PORT}`))
+    console.log(chalk.blue.bold(`📚 Documentación de la API en http://localhost:${PORT}/api-docs`))
  } catch (error) {
     console.log(chalk.red.bold(`Error al iniciar el servidor: ${error}`))
  }
