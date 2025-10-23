@@ -222,22 +222,20 @@ Content-Type: {{json}}
 ### ==========================
 
 ### Listar pagos
-GET {{baseUrl}}/pagos
-
-### Obtener pago por ID
-GET {{baseUrl}}/pagos/1
+GET {{baseUrl}}/pagos?usuarioId=1
 
 ### Crear pago
-POST {{baseUrl}}/pagos
+POST {{baseUrl}}/pagos?usuarioId=1
 Content-Type: {{json}}
 
 {
-  "id_usuario": 1,
   "id_suscripcion": 1,
   "id_metodo_pago": 1,
-  "importe": 100,
-  "fecha_pago": "2025-10-01T00:00:00Z"
+  "importe": 9.99,
+  "fecha_pago": "2025-10-01T12:00:00Z"
 }
+
+
 
 ### ==========================
 ### VISTAS AVANZADAS CON JOINS (Ejercicios adicionales)

@@ -15,7 +15,7 @@ const generosRoutes = require('./generos')
 const playlistsRoutes = require('./playlists')
 const suscripcionesRoutes = require('./suscripciones')
 const metodosPagoRoutes = require('./metodos-pago')
-// const pagosRoutes = require('./pagos')
+const pagosRoutes = require('./pagos')
 // const vistasRoutes = require('./vistas')
 
 // TODO: Configurar las rutas con sus prefijos
@@ -27,7 +27,7 @@ router.use('/generos', generosRoutes)
 router.use('/playlists', playlistsRoutes)
 router.use('/suscripciones', suscripcionesRoutes)
 router.use('/metodos-pago', metodosPagoRoutes)
-// router.use('/pagos', pagosRoutes)
+router.use('/pagos', pagosRoutes)
 // router.use('/vistas', vistasRoutes)
 
 // Ruta de prueba
