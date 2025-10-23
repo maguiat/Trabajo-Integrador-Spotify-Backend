@@ -1,6 +1,7 @@
 const Playlist = require("../models/Playlist")
 const Cancion = require("../models/Cancion")
 const PlaylistCancion = require("../models/Playlist_cancion.js")
+const Usuario = require("../models/Usuario")
 const chalk = require("chalk")
 
 // GET /playlists (listar playlists)

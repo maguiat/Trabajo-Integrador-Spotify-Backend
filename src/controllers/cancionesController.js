@@ -98,7 +98,7 @@ crearCancion = async (req, res, next) => {
 
     // --- Validar si falta algún campo ---
     const camposRequeridos = ["titulo", "duracion_seg", "id_album"]
-    s
+    
     const camposFaltantes = camposRequeridos.filter(
       (campo) => !req.body[campo]
     )
