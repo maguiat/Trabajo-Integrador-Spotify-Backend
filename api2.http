@@ -65,10 +65,6 @@ GET {{baseUrl}}/canciones?albumId=4
 Accept: application/json
 
 
-### Listar canciones del artista 4
-GET {{baseUrl}}/canciones?artistaId=4
-Accept: application/json
-
 ### Actualizar canción 5
 PUT {{baseUrl}}/canciones/5
 Content-Type: application/json
@@ -145,12 +141,6 @@ Content-Type: {{json}}
 ### ==========================
 ### MÉTODOS DE PAGO
 ### ==========================
-
-### Listar métodos de pago
-GET {{baseUrl}}/metodos-pago
-
-### Obtener método de pago por ID
-GET {{baseUrl}}/metodos-pago/1
 
 ### Crear método de pago (credito)
 
