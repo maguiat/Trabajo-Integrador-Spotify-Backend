@@ -1,24 +1,36 @@
 openapi: 3.0.3
 info:
   title: Spotify Backend API
-  description: |
-    API REST para plataforma de streaming musical estilo Spotify.
-    
+  description: 'API REST para plataforma de streaming musical estilo Spotify.
+
+
     ## Características principales:
+
     - Gestión completa de usuarios, artistas, álbumes y canciones
+
     - Sistema de playlists con soft-delete
+
     - Manejo de suscripciones y pagos
+
     - Vistas avanzadas con JOINs complejos
+
     - Validaciones exhaustivas y manejo de errores
-    
+
+
     ## Ejercicios adicionales:
+
     - **Vistas con JOINs**: Consultas complejas para análisis de datos
+
     - **Canciones populares por país**: Análisis de reproducciones por ubicación geográfica
+
     - **Ingresos por artista/discográfica**: Análisis financiero detallado
-    
+
+
     ## Autenticación:
+
     Algunos endpoints pueden requerir autenticación JWT (implementación opcional).
-    
+
+    '
   version: 1.0.0
   contact:
     name: Proyecto Integrador UNTreF
@@ -26,56 +38,53 @@ info:
   license:
     name: MIT
     url: https://opensource.org/licenses/MIT
-
 servers:
-  - url: http://localhost:3000/api/v1
-    description: Servidor de desarrollo local
-  - url: https://api.spotify-backend.com/v1
-    description: Servidor de producción (ejemplo)
-
+- url: http://localhost:3000/api/v1
+  description: Servidor de desarrollo local
+- url: https://api.spotify-backend.com/v1
+  description: Servidor de producción (ejemplo)
 tags:
-  - name: Usuarios
-    description: Gestión de usuarios y autenticación
-  - name: Artistas
-    description: Gestión de artistas
-  - name: Álbumes
-    description: Gestión de álbumes musicales
-  - name: Canciones
-    description: Gestión de canciones y géneros
-  - name: Géneros
-    description: Gestión de géneros musicales
-  - name: Playlists
-    description: Gestión de playlists de usuarios
-  - name: Suscripciones
-    description: Gestión de suscripciones de usuarios
-  - name: Métodos de Pago
-    description: Gestión de métodos de pago
-  - name: Pagos
-    description: Gestión de pagos y facturación
-  - name: Vistas Avanzadas
-    description: Consultas complejas con JOINs (Ejercicios adicionales)
-
+- name: Usuarios
+  description: Gestión de usuarios y autenticación
+- name: Artistas
+  description: Gestión de artistas
+- name: Álbumes
+  description: Gestión de álbumes musicales
+- name: Canciones
+  description: Gestión de canciones y géneros
+- name: Géneros
+  description: Gestión de géneros musicales
+- name: Playlists
+  description: Gestión de playlists de usuarios
+- name: Suscripciones
+  description: Gestión de suscripciones de usuarios
+- name: Métodos de Pago
+  description: Gestión de métodos de pago
+- name: Pagos
+  description: Gestión de pagos y facturación
+- name: Vistas Avanzadas
+  description: Consultas complejas con JOINs (Ejercicios adicionales)
 paths:
-  # ==================== USUARIOS ====================
   /usuarios:
     get:
-      tags: [Usuarios]
+      tags:
+      - Usuarios
       summary: Listar usuarios
       description: Obtiene una lista paginada de usuarios (sin password_hash)
       parameters:
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-            minimum: 1
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
-            minimum: 1
-            maximum: 100
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+          minimum: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 20
+          minimum: 1
+          maximum: 100
       responses:
         '200':
           description: Lista de usuarios obtenida exitosamente
@@ -90,9 +99,9 @@ paths:
                       $ref: '#/components/schemas/UsuarioResponse'
                   pagination:
                     $ref: '#/components/schemas/Pagination'
-    
     post:
-      tags: [Usuarios]
+      tags:
+      - Usuarios
       summary: Crear usuario
       description: Crea un nuevo usuario con validaciones
       requestBody:
@@ -112,17 +121,17 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '409':
           $ref: '#/components/responses/Conflict'
-
   /usuarios/{id}:
     get:
-      tags: [Usuarios]
+      tags:
+      - Usuarios
       summary: Obtener usuario por ID
       parameters:
-        - name: id
-          in: path
-          required: true
-          schema:
-            type: integer
+      - name: id
+        in: path
+        required: true
+        schema:
+          type: integer
       responses:
         '200':
           description: Usuario encontrado
@@ -132,10 +141,66 @@ paths:
                 $ref: '#/components/schemas/UsuarioResponse'
         '404':
           $ref: '#/components/responses/NotFound'
-
+    put:
+      summary: Actualizar usuario
+      tags:
+      - Usuarios
+      parameters:
+      - $ref: '#/components/parameters/IdUsuarioParam'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UsuarioUpdate'
+      responses:
+        '200':
+          description: Usuario actualizado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UsuarioActualizadoResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundUsuario'
+        '409':
+          description: Email ya registrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '400':
+          $ref: '#/components/responses/ValidationError'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+    delete:
+      summary: Eliminar usuario
+      tags:
+      - Usuarios
+      parameters:
+      - $ref: '#/components/parameters/IdUsuarioParam'
+      responses:
+        '200':
+          description: Usuario eliminado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MensajeResponse'
+        '404':
+          $ref: '#/components/responses/NotFoundUsuario'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
   /usuarios/password-vencidas:
     get:
-      tags: [Usuarios]
+      tags:
+      - Usuarios
       summary: Usuarios con contraseña vencida
       description: Lista usuarios con contraseña no actualizada en más de 90 días
       responses:
@@ -147,41 +212,38 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/UsuarioResponse'
-
-  # ==================== VISTAS AVANZADAS (EJERCICIOS) ====================
   /vistas/canciones-populares-por-pais:
     get:
-      tags: [Vistas Avanzadas]
+      tags:
+      - Vistas Avanzadas
       summary: 'EJERCICIO 1: Canciones populares por país'
-      description: |
-        **Ejercicio de JOINs complejos**: Obtiene las canciones más reproducidas 
-        agrupadas por país de origen de los usuarios.
-        
-        **JOINs utilizados**: 
-        cancion → album → artista, playlist_cancion → playlist → usuario → pais
-        
-        **Agregaciones**: SUM(reproducciones), COUNT(playlists)
+      description: "**Ejercicio de JOINs complejos**: Obtiene las canciones más reproducidas\
+        \ \nagrupadas por país de origen de los usuarios.\n\n**JOINs utilizados**:\
+        \ \ncancion → album → artista, playlist_cancion → playlist → usuario → pais\n\
+        \n**Agregaciones**: SUM(reproducciones), COUNT(playlists)\n"
       parameters:
-        - name: pais
-          in: query
-          description: Filtrar por país específico
-          schema:
-            type: string
-            example: Argentina
-        - name: limit
-          in: query
-          description: Límite de resultados
-          schema:
-            type: integer
-            default: 50
-            minimum: 1
-        - name: orden
-          in: query
-          description: Campo de ordenamiento
-          schema:
-            type: string
-            enum: [reproducciones, apariciones]
-            default: reproducciones
+      - name: pais
+        in: query
+        description: Filtrar por país específico
+        schema:
+          type: string
+          example: Argentina
+      - name: limit
+        in: query
+        description: Límite de resultados
+        schema:
+          type: integer
+          default: 50
+          minimum: 1
+      - name: orden
+        in: query
+        description: Campo de ordenamiento
+        schema:
+          type: string
+          enum:
+          - reproducciones
+          - apariciones
+          default: reproducciones
       responses:
         '200':
           description: Datos de canciones populares por país
@@ -193,49 +255,49 @@ paths:
                   $ref: '#/components/schemas/CancionPopularPorPais'
         '400':
           $ref: '#/components/responses/BadRequest'
-
   /vistas/ingresos-por-artista-discografica:
     get:
-      tags: [Vistas Avanzadas]
+      tags:
+      - Vistas Avanzadas
       summary: 'EJERCICIO 2: Ingresos por artista y discográfica'
-      description: |
-        **Ejercicio de JOINs complejos**: Analiza los ingresos generados por cada 
-        combinación artista-discográfica con estadísticas detalladas.
-        
-        **JOINs utilizados**: 
-        pago → suscripcion → usuario → playlist → playlist_cancion → cancion → album → artista/discografica → pais
-        
-        **Agregaciones**: SUM(ingresos), COUNT(suscripciones), AVG(reproducciones)
+      description: "**Ejercicio de JOINs complejos**: Analiza los ingresos generados\
+        \ por cada \ncombinación artista-discográfica con estadísticas detalladas.\n\
+        \n**JOINs utilizados**: \npago → suscripcion → usuario → playlist → playlist_cancion\
+        \ → cancion → album → artista/discografica → pais\n\n**Agregaciones**: SUM(ingresos),\
+        \ COUNT(suscripciones), AVG(reproducciones)\n"
       parameters:
-        - name: pais
-          in: query
-          description: Filtrar por país de la discográfica
-          schema:
-            type: string
-            example: Argentina
-        - name: minimo_ingresos
-          in: query
-          description: Filtrar por monto mínimo de ingresos
-          schema:
-            type: number
-            minimum: 0
-        - name: orden
-          in: query
-          description: Campo de ordenamiento
-          schema:
-            type: string
-            enum: [ingresos, suscripciones, canciones]
-            default: ingresos
-        - name: page
-          in: query
-          schema:
-            type: integer
-            default: 1
-        - name: limit
-          in: query
-          schema:
-            type: integer
-            default: 20
+      - name: pais
+        in: query
+        description: Filtrar por país de la discográfica
+        schema:
+          type: string
+          example: Argentina
+      - name: minimo_ingresos
+        in: query
+        description: Filtrar por monto mínimo de ingresos
+        schema:
+          type: number
+          minimum: 0
+      - name: orden
+        in: query
+        description: Campo de ordenamiento
+        schema:
+          type: string
+          enum:
+          - ingresos
+          - suscripciones
+          - canciones
+          default: ingresos
+      - name: page
+        in: query
+        schema:
+          type: integer
+          default: 1
+      - name: limit
+        in: query
+        schema:
+          type: integer
+          default: 20
       responses:
         '200':
           description: Datos de ingresos por artista y discográfica
@@ -252,19 +314,17 @@ paths:
                     $ref: '#/components/schemas/Pagination'
         '400':
           $ref: '#/components/responses/BadRequest'
-
 components:
   schemas:
-    # ==================== SCHEMAS BÁSICOS ====================
     UsuarioCreate:
       type: object
       required:
-        - email
-        - password
-        - fecha_nac
-        - sexo
-        - id_pais
-        - tipo_usuario_actual
+      - email
+      - password
+      - fecha_nac
+      - sexo
+      - id_pais
+      - tipo_usuario_actual
       properties:
         email:
           type: string
@@ -273,16 +333,20 @@ components:
         password:
           type: string
           minLength: 8
-          pattern: '^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]'
+          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]
           example: Secr3t0!
-          description: Debe contener al menos una mayúscula, minúscula, número y carácter especial
+          description: Debe contener al menos una mayúscula, minúscula, número y carácter
+            especial
+          format: password
         fecha_nac:
           type: string
           format: date
           example: '1995-05-20'
         sexo:
           type: string
-          enum: [M, F]
+          enum:
+          - M
+          - F
           example: F
         cp:
           type: string
@@ -294,7 +358,8 @@ components:
         tipo_usuario_actual:
           type: integer
           example: 2
-
+        nyap:
+          type: string
     UsuarioResponse:
       type: object
       properties:
@@ -329,8 +394,6 @@ components:
         fecha_creacion:
           type: string
           format: date-time
-
-    # ==================== SCHEMAS PARA EJERCICIOS ====================
     CancionPopularPorPais:
       type: object
       description: Resultado del EJERCICIO 1 - Canciones populares por país
@@ -355,7 +418,6 @@ components:
           type: integer
           example: 245
           description: Número de playlists activas que contienen esta canción
-
     IngresoPorArtistaDiscografica:
       type: object
       description: Resultado del EJERCICIO 2 - Ingresos por artista y discográfica
@@ -385,26 +447,30 @@ components:
         promedio_reproducciones:
           type: number
           format: decimal
-          example: 125000.50
+          example: 125000.5
           description: Promedio de reproducciones por canción
-
-    # ==================== SCHEMAS AUXILIARES ====================
     Pagination:
       type: object
       properties:
         page:
           type: integer
           example: 1
+          minimum: 1
         limit:
           type: integer
           example: 20
+          minimum: 1
         total:
           type: integer
           example: 150
         pages:
           type: integer
           example: 8
-
+      required:
+      - page
+      - limit
+      - total
+      - pages
     Error:
       type: object
       properties:
@@ -419,13 +485,173 @@ components:
               example: Datos de entrada inválidos
             details:
               oneOf:
-                - type: string
-                - type: array
-                  items:
-                    type: string
+              - type: string
+              - type: array
+                items:
+                  type: string
               example: El email es obligatorio
-
-  # ==================== RESPUESTAS REUTILIZABLES ====================
+    Usuario:
+      type: object
+      required:
+      - id_usuario
+      - nyap
+      - email
+      - fecha_nac
+      - sexo
+      - cp
+      - id_pais
+      - tipo_usuario_actual
+      properties:
+        id_usuario:
+          type: integer
+          example: 123
+        nyap:
+          type: string
+          example: María García
+        email:
+          type: string
+          format: email
+          example: maria@example.com
+        fecha_nac:
+          type: string
+          format: date
+          example: '1998-07-15'
+        sexo:
+          type: string
+          enum:
+          - M
+          - F
+          - X
+          example: F
+        cp:
+          type: string
+          example: '1405'
+        id_pais:
+          type: integer
+          example: 1
+        tipo_usuario_actual:
+          type: string
+          example: premium
+        fecha_ult_mod_password:
+          type: string
+          format: date-time
+          nullable: true
+          example: '2025-07-01T18:32:15Z'
+    UsuarioUpdate:
+      type: object
+      additionalProperties: false
+      properties:
+        nyap:
+          type: string
+        email:
+          type: string
+          format: email
+        fecha_nac:
+          type: string
+          format: date
+        sexo:
+          type: string
+          enum:
+          - M
+          - F
+          - X
+        cp:
+          type: string
+        id_pais:
+          type: integer
+        tipo_usuario_actual:
+          type: string
+    UsuariosListResponse:
+      type: object
+      required:
+      - usuarios
+      - pagination
+      properties:
+        usuarios:
+          type: array
+          items:
+            $ref: '#/components/schemas/Usuario'
+        pagination:
+          $ref: '#/components/schemas/Pagination'
+    MensajeResponse:
+      type: object
+      required:
+      - message
+      properties:
+        message:
+          type: string
+    ErrorResponse:
+      type: object
+      required:
+      - error
+      properties:
+        error:
+          type: string
+        description:
+          type: string
+        path:
+          type: string
+        method:
+          type: string
+    UsuarioCreadoResponse:
+      type: object
+      required:
+      - message
+      - usuarioNuevo
+      properties:
+        message:
+          type: string
+          example: Usuario creado correctamente
+        usuarioNuevo:
+          $ref: '#/components/schemas/Usuario'
+    UsuarioActualizadoResponse:
+      type: object
+      required:
+      - message
+      - usuario
+      properties:
+        message:
+          type: string
+          example: Usuario actualizado correctamente
+        usuario:
+          $ref: '#/components/schemas/Usuario'
+    PasswordVencidasResponse:
+      type: object
+      required:
+      - message
+      - total
+      - dias_limite
+      - usuarios
+      properties:
+        message:
+          type: string
+          example: Usuarios con contraseñas vencidas (más de 90 días)
+        total:
+          type: integer
+          example: 2
+        dias_limite:
+          type: integer
+          example: 90
+        usuarios:
+          type: array
+          items:
+            type: object
+            required:
+            - id_usuario
+            - nyap
+            - email
+            properties:
+              id_usuario:
+                type: integer
+              nyap:
+                type: string
+              email:
+                type: string
+                format: email
+              fecha_ult_mod_password:
+                type: string
+                format: date-time
+                nullable: true
   responses:
     BadRequest:
       description: Solicitud inválida
@@ -437,8 +663,9 @@ components:
             error:
               code: VALIDATION_ERROR
               message: Datos de entrada inválidos
-              details: ["El email es obligatorio", "La contraseña debe tener al menos 8 caracteres"]
-
+              details:
+              - El email es obligatorio
+              - La contraseña debe tener al menos 8 caracteres
     Conflict:
       description: Conflicto - Recurso duplicado
       content:
@@ -450,7 +677,6 @@ components:
               code: DUPLICATE_ENTRY
               message: El registro ya existe
               details: El email ya está registrado
-
     NotFound:
       description: Recurso no encontrado
       content:
@@ -462,7 +688,6 @@ components:
               code: NOT_FOUND
               message: Recurso no encontrado
               details: El usuario especificado no existe
-
     InternalServerError:
       description: Error interno del servidor
       content:
@@ -474,21 +699,74 @@ components:
               code: INTERNAL_SERVER_ERROR
               message: Error interno del servidor
               details: Error interno
-
-  # ==================== SEGURIDAD ====================
+    NotFoundUsuario:
+      description: Usuario no encontrado
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/MensajeResponse'
+          examples:
+            notFound:
+              value:
+                message: No se encontró el usuario
+    ValidationError:
+      description: Error de validación o FK
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
   securitySchemes:
     BearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
-      description: |
-        Token JWT para autenticación (implementación opcional).
-        
+      description: 'Token JWT para autenticación (implementación opcional).
+
+
         Ejemplo de uso:
-        ```
-        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
         ```
 
-# Aplicar seguridad globalmente (opcional)
-# security:
-#   - BearerAuth: []
+        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+
+        ```
+
+        '
+  parameters:
+    PageParam:
+      name: page
+      in: query
+      description: Número de página (1..N)
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        default: 1
+    LimitParam:
+      name: limit
+      in: query
+      description: Cantidad de items por página
+      required: false
+      schema:
+        type: integer
+        minimum: 1
+        maximum: 200
+        default: 20
+    IdUsuarioParam:
+      name: id
+      in: path
+      required: true
+      description: ID de usuario
+      schema:
+        type: integer
+        minimum: 1
+    DiasParam:
+      name: dias
+      in: query
+      required: false
+      description: Días sin modificar contraseña para considerar 'vencida' (default
+        90)
+      schema:
+        type: integer
+        minimum: 1
+        default: 90
