@@ -190,7 +190,7 @@ Content-Type: {{json}}
 
 {
   "id_usuario": 1,
-  "id_tipo_usuario": 1,
+  "tipo_usuario": 1,
   "fecha_inicio": "2025-10-01T00:00:00Z",
   "fecha_renovacion": "2025-11-01T00:00:00Z"
 }
@@ -201,7 +201,7 @@ Content-Type: {{json}}
 
 {
   "id_usuario": 1,
-  "id_tipo_usuario": 1,
+  "tipo_usuario": 1,
   "fecha_inicio": "2025-10-01T00:00:00Z",
   "fecha_renovacion": "2025-09-01T00:00:00Z"
 }
