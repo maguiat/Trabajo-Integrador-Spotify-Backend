@@ -1,8 +1,3 @@
-/**
- * Modelo Playlist
- * Los estudiantes deben implementar todas las operaciones CRUD para playlists
- */
-
 const { DataTypes } = require("sequelize")
 const sequelize = require("../config/database")
 
@@ -20,6 +15,10 @@ const Playlist = sequelize.define("playlist", {
   id_usuario: {
     type: DataTypes.INTEGER,
     allowNull: false,
+    references: {
+      model: "usuario",
+      key: "id_usuario",
+    },
   },
   cant_canciones: {
     type: DataTypes.INTEGER,

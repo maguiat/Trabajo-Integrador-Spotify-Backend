@@ -7,7 +7,7 @@ const CancionGenero = require("../models/Cancion_genero")
 const Genero = require("../models/Genero")
 
 // GET /canciones (listar canciones con filtros opcionales)
-getCanciones = async (req, res) => {
+getCanciones = async (req, res, next) => {
   try {
     const { genero, artistaId, albumId } = req.query
     let cancionesIds = null
@@ -75,7 +75,7 @@ getCanciones = async (req, res) => {
 }
 
 // GET /canciones/:id
-getCancionByID = async (req, res) => {
+getCancionByID = async (req, res, next) => {
   const { id } = req.params
   try {
     const cancion = await Cancion.findByPk(id)
@@ -92,7 +92,7 @@ getCancionByID = async (req, res) => {
 }
 
 // POST /canciones (crear canción)
-crearCancion = async (req, res) => {
+crearCancion = async (req, res, next) => {
   try {
     const { titulo, duracion_seg, id_album, reproducciones, likes } = req.body
 
@@ -149,7 +149,7 @@ crearCancion = async (req, res) => {
 }
 
 // PUT /canciones/:id (actualizar)
-updateCancion = async (req, res) => {
+updateCancion = async (req, res, next) => {
   try {
     const { id } = req.params
     const { titulo, duracion_seg, id_album, reproducciones, likes } = req.body
@@ -193,7 +193,7 @@ updateCancion = async (req, res) => {
 }
 
 // POST /canciones/:id/generos { id_genero } (asocia genero a canción)
-asociarGenero = async (req, res) => {
+asociarGenero = async (req, res, next) => {
   try {
     const { id } = req.params
     const { id_genero } = req.body
@@ -258,7 +258,7 @@ asociarGenero = async (req, res) => {
 }
 
 // DELETE /canciones/:id/generos/:id_genero (eliminar asociación)
-eliminarGenero = async (req, res) => {
+eliminarGenero = async (req, res, next) => {
   try {
     const { id, id_genero } = req.params
 
