@@ -11,6 +11,10 @@ const MetodoPago = sequelize.define('metodo_pago', {
     id_usuario: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'usuario',
+            key: 'id_usuario',
+        },
     },
     tipo_forma_pago: {
         type: DataTypes.ENUM('Credito', 'Debito', 'Efectivo', 'Debito Automatico x Banco'),

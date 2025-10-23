@@ -36,11 +36,19 @@ const Usuario = sequelize.define('usuario', {
     id_pais: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'pais',
+            key: 'id_pais'
+        }
     },
     // FK
     tipo_usuario_actual: {
         type: DataTypes.INTEGER,
         allowNull: false,
+        references: {
+            model: 'tipo_usuario',
+            key: 'id_tipo_usuario'
+        }
     },
     fecha_ult_mod_password: {
         type: DataTypes.DATEONLY,
