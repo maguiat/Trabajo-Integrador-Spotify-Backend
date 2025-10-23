@@ -18,10 +18,6 @@ Content-Type: {{json}}
   "tipo_usuario_actual": 1
 }
 
-### Eliminar usuario por ID
-DELETE {{baseUrl}}/usuarios/23
-
-
 ### ==========================
 ### ALBUMES
 ### ==========================
@@ -32,11 +28,6 @@ GET {{baseUrl}}/albumes
 ### Listar albumes filtrados
 GET {{baseUrl}}/albumes?artistaId=5
 
-### Listar albumes con búsqueda
-GET {{baseUrl}}/albumes?q=Love
-
-### Listar canciones de un album
-GET {{baseUrl}}/albumes/1/canciones
 
 ### Crear album
 POST {{baseUrl}}/albumes
@@ -49,3 +40,79 @@ Content-Type: {{json}}
   "anio_publicacion": 1992,
   "duracion_total_seg": 3600
 }
+
+### ==========================
+### CANCIONES
+### ==========================
+
+### Listar todas las canciones
+GET {{baseUrl}}/canciones
+Accept: application/json
+
+###
+
+### Listar canciones del álbum con ID 3
+GET {{baseUrl}}/canciones?albumId=3
+Accept: application/json
+
+###
+
+### Listar canciones del álbum ID 4
+GET {{baseUrl}}/canciones?albumId=4
+Accept: application/json
+
+
+### Listar canciones del artista 4
+GET {{baseUrl}}/canciones?artistaId=4
+Accept: application/json
+
+### Actualizar canción 5
+PUT {{baseUrl}}/canciones/5
+Content-Type: application/json
+
+{
+  "titulo": "New Divide",
+  "duracion_seg": 275,
+  "id_album": 1
+}
+
+### Actualizar título de canción 7
+PUT {{baseUrl}}/canciones/7
+Content-Type: application/json
+
+{
+  "titulo": "Numb"
+}
+
+
+### ==========================
+### PLAYLISTS
+### ==========================
+
+### Listar playlists
+GET {{baseUrl}}/playlists
+
+
+### Obtener playlist por ID
+GET {{baseUrl}}/playlists/1
+
+### Crear playlist
+POST {{baseUrl}}/playlists
+Content-Type: {{json}}
+
+{
+  "titulo": "Para llorar",
+  "id_usuario": 11
+}
+
+### Agregar canción a playlist
+POST {{baseUrl}}/playlists/1/canciones
+Content-Type: {{json}}
+
+{
+  "id_cancion": 10,
+  "orden": 1
+}
+
+### Eliminar canción de playlist
+DELETE {{baseUrl}}/playlists/1/canciones/10
