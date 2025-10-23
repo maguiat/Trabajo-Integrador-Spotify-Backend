@@ -216,11 +216,11 @@ Content-Type: {{json}}
 
 {
   "id_usuario": 1,
-  "tipo_forma_pago": "Tarjeta de crédito",
+  "tipo_forma_pago": "Credito",
   "nro_tarjeta": "4519000000001234",
   "mes_caduca": 12,
   "anio_caduca": 2027,
-  "banco_codigo": "BANK01"
+  "banco_codigo": 1
 }
 
 ### Listar métodos de pago por usuario

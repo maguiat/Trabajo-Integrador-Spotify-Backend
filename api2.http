@@ -116,3 +116,129 @@ Content-Type: {{json}}
 
 ### Eliminar canción de playlist
 DELETE {{baseUrl}}/playlists/1/canciones/10
+
+
+### ==========================
+### SUSCRIPCIONES
+### ==========================
+
+### Listar suscripciones
+GET {{baseUrl}}/suscripciones
+
+### Obtener suscripción por ID
+GET {{baseUrl}}/suscripciones/3
+
+### Crear suscripción
+POST {{baseUrl}}/suscripciones
+Content-Type: {{json}}
+
+{
+  "id_usuario": 6,
+  "tipo_usuario": 1,
+  "fecha_inicio": "2025-10-01T00:00:00Z",
+  "fecha_renovacion": "2025-11-01T00:00:00Z"
+}
+
+### ==========================
+### MÉTODOS DE PAGO
+### ==========================
+
+### Listar métodos de pago
+GET {{baseUrl}}/metodos-pago
+
+### Obtener método de pago por ID
+GET {{baseUrl}}/metodos-pago/1
+
+### Crear método de pago (credito)
+
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "id_usuario": 1,
+  "tipo_forma_pago": "Credito",
+  "nro_tarjeta": "4519000000001234",
+  "mes_caduca": 12,
+  "anio_caduca": 2027,
+  "banco_codigo": 1
+}
+### Crear método de pago (debito) 
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "id_usuario": 2,
+  "tipo_forma_pago": "Debito",
+  "nro_tarjeta": "4519000000001234",
+  "mes_caduca": 12,
+  "anio_caduca": 2027,
+  "banco_codigo": 1
+}
+### Crear método de pago (efectivo) 
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "id_usuario": 1,
+  "tipo_forma_pago": "Efectivo"
+
+}
+### Crear método de pago (debito automatico x banco) 
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "id_usuario": 1,
+  "tipo_forma_pago": "Debito Automatico x Banco",
+  "cbu": "12345678901234567890",
+  "banco_codigo": 1
+}
+
+### Crear método de pago (ERROR: falta datos requeridos)
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "tipo_forma_pago": "Credito"
+}
+
+### Crear método de pago (ERROR: tipo de forma de pago no reconocido)
+POST {{baseUrl}}/metodos-pago 
+Content-Type: {{json}}
+
+{
+  "id_usuario": 1,
+  "tipo_forma_pago": "Tarjeta",
+  "nro_tarjeta": "4519000000001234",
+  "mes_caduca": 12,
+  "anio_caduca": 2027,
+  "banco_codigo": 1
+}
+
+
+
+### ==========================
+### PAGOS
+### ==========================
+
+### Listar pagos
+GET {{baseUrl}}/pagos
+
+### Obtener pago por ID
+GET {{baseUrl}}/pagos/1
+
+### Crear pago
+POST {{baseUrl}}/pagos
+Content-Type: {{json}}
+
+{
+  "id_usuario": 1,
+  "id_suscripcion": 1,
+  "id_metodo_pago": 1,
+  "importe": 100,
+  "fecha_pago": "2025-10-01T00:00:00Z"
+}
+
+### ==========================
+### VISTAS AVANZADAS CON JOINS (Ejercicios adicionales)
+### ==========================
