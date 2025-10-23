@@ -67,27 +67,20 @@ tags:
 paths:
   /usuarios:
     get:
-      tags:
-      - Usuarios
+      tags: [Usuarios]
       summary: Listar usuarios
-      description: Obtiene una lista paginada de usuarios (sin password_hash)
       parameters:
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-          minimum: 1
-      - name: limit
-        in: query
-        schema:
-          type: integer
-          default: 20
-          minimum: 1
-          maximum: 100
+        - in: query
+          name: page
+          schema: { type: integer, minimum: 1, default: 1 }
+          description: Página a solicitar.
+        - in: query
+          name: limit
+          schema: { type: integer, minimum: 1, default: 20 }
+          description: Tamaño de página.
       responses:
-        '200':
-          description: Lista de usuarios obtenida exitosamente
+        "200":
+          description: Lista paginada de usuarios (sin password_hash).
           content:
             application/json:
               schema:
@@ -95,678 +88,1197 @@ paths:
                 properties:
                   usuarios:
                     type: array
-                    items:
-                      $ref: '#/components/schemas/UsuarioResponse'
+                    items: { $ref: "#/components/schemas/Usuario" }
                   pagination:
-                    $ref: '#/components/schemas/Pagination'
-    post:
-      tags:
-      - Usuarios
-      summary: Crear usuario
-      description: Crea un nuevo usuario con validaciones
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsuarioCreate'
-      responses:
-        '201':
-          description: Usuario creado exitosamente
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsuarioResponse'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '409':
-          $ref: '#/components/responses/Conflict'
-  /usuarios/{id}:
-    get:
-      tags:
-      - Usuarios
-      summary: Obtener usuario por ID
-      parameters:
-      - name: id
-        in: path
-        required: true
-        schema:
-          type: integer
-      responses:
-        '200':
-          description: Usuario encontrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsuarioResponse'
-        '404':
-          $ref: '#/components/responses/NotFound'
-    put:
-      summary: Actualizar usuario
-      tags:
-      - Usuarios
-      parameters:
-      - $ref: '#/components/parameters/IdUsuarioParam'
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UsuarioUpdate'
-      responses:
-        '200':
-          description: Usuario actualizado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/UsuarioActualizadoResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundUsuario'
-        '409':
-          description: Email ya registrado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-        '400':
-          $ref: '#/components/responses/ValidationError'
-        '500':
-          description: Error interno
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-    delete:
-      summary: Eliminar usuario
-      tags:
-      - Usuarios
-      parameters:
-      - $ref: '#/components/parameters/IdUsuarioParam'
-      responses:
-        '200':
-          description: Usuario eliminado
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/MensajeResponse'
-        '404':
-          $ref: '#/components/responses/NotFoundUsuario'
-        '500':
-          description: Error interno
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/ErrorResponse'
-  /usuarios/password-vencidas:
-    get:
-      tags:
-      - Usuarios
-      summary: Usuarios con contraseña vencida
-      description: Lista usuarios con contraseña no actualizada en más de 90 días
-      responses:
-        '200':
-          description: Lista de usuarios con contraseña vencida
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/UsuarioResponse'
-  /vistas/canciones-populares-por-pais:
-    get:
-      tags:
-      - Vistas Avanzadas
-      summary: 'EJERCICIO 1: Canciones populares por país'
-      description: "**Ejercicio de JOINs complejos**: Obtiene las canciones más reproducidas\
-        \ \nagrupadas por país de origen de los usuarios.\n\n**JOINs utilizados**:\
-        \ \ncancion → album → artista, playlist_cancion → playlist → usuario → pais\n\
-        \n**Agregaciones**: SUM(reproducciones), COUNT(playlists)\n"
-      parameters:
-      - name: pais
-        in: query
-        description: Filtrar por país específico
-        schema:
-          type: string
-          example: Argentina
-      - name: limit
-        in: query
-        description: Límite de resultados
-        schema:
-          type: integer
-          default: 50
-          minimum: 1
-      - name: orden
-        in: query
-        description: Campo de ordenamiento
-        schema:
-          type: string
-          enum:
-          - reproducciones
-          - apariciones
-          default: reproducciones
-      responses:
-        '200':
-          description: Datos de canciones populares por país
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/CancionPopularPorPais'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-  /vistas/ingresos-por-artista-discografica:
-    get:
-      tags:
-      - Vistas Avanzadas
-      summary: 'EJERCICIO 2: Ingresos por artista y discográfica'
-      description: "**Ejercicio de JOINs complejos**: Analiza los ingresos generados\
-        \ por cada \ncombinación artista-discográfica con estadísticas detalladas.\n\
-        \n**JOINs utilizados**: \npago → suscripcion → usuario → playlist → playlist_cancion\
-        \ → cancion → album → artista/discografica → pais\n\n**Agregaciones**: SUM(ingresos),\
-        \ COUNT(suscripciones), AVG(reproducciones)\n"
-      parameters:
-      - name: pais
-        in: query
-        description: Filtrar por país de la discográfica
-        schema:
-          type: string
-          example: Argentina
-      - name: minimo_ingresos
-        in: query
-        description: Filtrar por monto mínimo de ingresos
-        schema:
-          type: number
-          minimum: 0
-      - name: orden
-        in: query
-        description: Campo de ordenamiento
-        schema:
-          type: string
-          enum:
-          - ingresos
-          - suscripciones
-          - canciones
-          default: ingresos
-      - name: page
-        in: query
-        schema:
-          type: integer
-          default: 1
-      - name: limit
-        in: query
-        schema:
-          type: integer
-          default: 20
-      responses:
-        '200':
-          description: Datos de ingresos por artista y discográfica
+                    $ref: "#/components/schemas/Pagination"
+        "404":
+          description: No se encontraron usuarios.
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  data:
+                  message: { type: string }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Usuarios]
+      summary: Crear usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UsuarioCreate" }
+      responses:
+        "201":
+          description: Usuario creado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  usuarioNuevo:
+                    $ref: "#/components/schemas/Usuario"
+        "400":
+          description: Faltan campos requeridos o email duplicado.
+          content:
+            application/json:
+              schema:
+                oneOf:
+                  - $ref: "#/components/schemas/ErrorMessage"
+                  - $ref: "#/components/schemas/Error"
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /usuarios/{id}:
+    get:
+      tags: [Usuarios]
+      summary: Obtener usuario por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Usuario encontrado (sin password_hash).
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Usuario" }
+        "404":
+          description: No se encontró el usuario.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    put:
+      tags: [Usuarios]
+      summary: Actualizar usuario
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/UsuarioUpdate" }
+      responses:
+        "200":
+          description: Usuario actualizado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  usuario: { $ref: "#/components/schemas/Usuario" }
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "409":
+          description: Email ya registrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "400":
+          description: FK inválida o validación de Sequelize.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    delete:
+      tags: [Usuarios]
+      summary: Eliminar usuario
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Usuario eliminado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Message" }
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /usuarios/password-vencidas:
+    get:
+      tags: [Usuarios]
+      summary: Listar usuarios con contraseña vencida
+      parameters:
+        - in: query
+          name: dias
+          schema: { type: integer, default: 90, minimum: 1 }
+          description: Días desde la última modificación de contraseña para considerarla vencida.
+      responses:
+        "200":
+          description: Resultado con usuarios vencidos (o mensaje indicando ninguno).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  total: { type: integer }
+                  dias_limite: { type: integer }
+                  usuarios:
                     type: array
                     items:
-                      $ref: '#/components/schemas/IngresoPorArtistaDiscografica'
-                  pagination:
-                    $ref: '#/components/schemas/Pagination'
-        '400':
-          $ref: '#/components/responses/BadRequest'
+                      type: object
+                      properties:
+                        id_usuario: { type: integer }
+                        nyap: { type: string }
+                        email: { type: string, format: email }
+                        fecha_ult_mod_password: { type: string, format: date-time, nullable: true }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /artistas:
+    get:
+      tags: [Artistas]
+      summary: Listar artistas
+      responses:
+        "200":
+          description: Lista de artistas.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Artista" }
+        "404":
+          description: No se encontraron artistas.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Artistas]
+      summary: Crear artista
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/ArtistaCreate" }
+      responses:
+        "201":
+          description: Artista creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  artista: { $ref: "#/components/schemas/Artista" }
+        "400":
+          description: Nombre ya registrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /artistas/{id}:
+    get:
+      tags: [Artistas]
+      summary: Obtener artista por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Artista encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Artista" }
+        "404":
+          description: No se encontró el artista.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /generos:
+    get:
+      tags: [Géneros]
+      summary: Listar géneros
+      responses:
+        "200":
+          description: Lista de géneros ordenados por id_genero ASC.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  generos:
+                    type: array
+                    items: { $ref: "#/components/schemas/Genero" }
+        "404":
+          description: No se encontraron géneros.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Géneros]
+      summary: Crear género
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/GeneroCreate" }
+      responses:
+        "201":
+          description: Género creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  genero: { $ref: "#/components/schemas/Genero" }
+        "400":
+          description: Falta nombre.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "409":
+          description: Género duplicado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /albumes:
+    get:
+      tags: [Álbumes]
+      summary: Listar álbumes (con filtros opcionales)
+      parameters:
+        - in: query
+          name: artistaId
+          schema: { type: integer }
+          description: Filtrar por ID de artista.
+        - in: query
+          name: query
+          schema: { type: string }
+          description: Búsqueda por coincidencia parcial (campo `nombre` en el controller).
+      responses:
+        "200":
+          description: Lista de álbumes.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Album" }
+        "404":
+          description: No se encontraron álbumes.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Álbumes]
+      summary: Crear álbum
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/AlbumCreate" }
+      responses:
+        "201":
+          description: Álbum creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  album: { $ref: "#/components/schemas/Album" }
+        "400":
+          description: Faltan campos o título duplicado para mismo artista.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /albumes/{id}:
+    get:
+      tags: [Álbumes]
+      summary: Obtener álbum por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Álbum encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Album" }
+        "404":
+          description: No se encontró el álbum.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /albumes/{id}/canciones:
+    get:
+      tags: [Álbumes]
+      summary: Listar canciones de un álbum
+      description: |
+        Devuelve las canciones pertenecientes al álbum dado por `id`.
+        (Asegurate de que el controller consulte la tabla de canciones; hoy el código usa `Album.findAll`).
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Lista de canciones del álbum.
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: "#/components/schemas/Cancion" }
+        "404":
+          description: No se encontraron canciones.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /canciones:
+    get:
+      tags: [Canciones]
+      summary: Listar canciones (filtros opcionales)
+      parameters:
+        - in: query
+          name: genero
+          schema: { type: integer }
+          description: ID de género.
+        - in: query
+          name: artistaId
+          schema: { type: integer }
+          description: ID de artista (filtra por álbumes del artista).
+        - in: query
+          name: albumId
+          schema: { type: integer }
+          description: ID de álbum.
+      responses:
+        "200":
+          description: Lista de canciones (con total).
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  canciones:
+                    type: array
+                    items: { $ref: "#/components/schemas/Cancion" }
+        "404":
+          description: No se encontraron canciones o filtros inválidos.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Canciones]
+      summary: Crear canción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CancionCreate" }
+      responses:
+        "201":
+          description: Canción creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  cancion: { $ref: "#/components/schemas/Cancion" }
+        "400":
+          description: Datos inválidos o álbum inexistente o título duplicado por álbum.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Álbum no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /canciones/{id}:
+    get:
+      tags: [Canciones]
+      summary: Obtener canción por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Canción encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Cancion" }
+        "404":
+          description: No se encontró la canción.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    put:
+      tags: [Canciones]
+      summary: Actualizar canción
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/CancionUpdate" }
+      responses:
+        "200":
+          description: Canción actualizada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  cancion: { $ref: "#/components/schemas/Cancion" }
+        "404":
+          description: Canción no encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "400":
+          description: FK inválida o validación de Sequelize.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /canciones/{id}/generos:
+    post:
+      tags: [Canciones]
+      summary: Asociar género a canción
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [id_genero]
+              properties:
+                id_genero: { type: integer }
+      responses:
+        "201":
+          description: Género asociado correctamente.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  cancion:
+                    type: object
+                    properties:
+                      id_cancion: { type: integer }
+                      titulo: { type: string }
+                  genero:
+                    type: object
+                    properties:
+                      id_genero: { type: integer }
+                      nombre: { type: string }
+        "400":
+          description: Falta id_genero.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Canción o género no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "409":
+          description: Asociación ya existente.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /canciones/{id}/generos/{id_genero}:
+    delete:
+      tags: [Canciones]
+      summary: Eliminar asociación género-canción
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - in: path
+          name: id_genero
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Asociación eliminada.
+          content:
+            application/json:
+              schema:
+                type: object
+
+        "404":
+          description: Canción/género inexistente o asociación no encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /playlists:
+    get:
+      tags: [Playlists]
+      summary: Listar playlists
+      responses:
+        "200":
+          description: Lista de playlists.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  playlists:
+                    type: array
+                    items: { $ref: "#/components/schemas/Playlist" }
+        "404":
+          description: No se encontraron playlists.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Playlists]
+      summary: Crear playlist
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistCreate" }
+      responses:
+        "201":
+          description: Playlist creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  playlist: { $ref: "#/components/schemas/Playlist" }
+        "400":
+          description: Faltan campos requeridos.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /playlists/{id}:
+    get:
+      tags: [Playlists]
+      summary: Obtener playlist por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Playlist encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Playlist" }
+        "404":
+          description: No se encontró la playlist.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    put:
+      tags: [Playlists]
+      summary: Actualizar playlist
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistUpdate" }
+      responses:
+        "200":
+          description: Playlist actualizada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  playlistActualizada: { $ref: "#/components/schemas/Playlist" }
+        "404":
+          description: Playlist no encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "400":
+          description: Estado inválido o falta fecha_eliminada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /playlists/{id}/canciones:
+    post:
+      tags: [Playlists]
+      summary: Agregar canción a playlist
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PlaylistSongAdd" }
+      responses:
+        "201":
+          description: Canción agregada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  playlistActualizada: { $ref: "#/components/schemas/Playlist" }
+        "404":
+          description: Playlist o canción no encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "409":
+          description: Canción ya está en playlist.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /playlists/{id}/canciones/{id_cancion}:
+    delete:
+      tags: [Playlists]
+      summary: Eliminar canción de playlist
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+        - in: path
+          name: id_cancion
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Canción eliminada de playlist.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  playlistActualizada: { $ref: "#/components/schemas/Playlist" }
+        "404":
+          description: Playlist/canción no encontrada o no estaba en la playlist.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /suscripciones:
+    get:
+      tags: [Suscripciones]
+      summary: Listar suscripciones
+      responses:
+        "200":
+          description: Lista de suscripciones.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  suscripciones:
+                    type: array
+                    items: { $ref: "#/components/schemas/Suscripcion" }
+        "404":
+          description: No se encontraron suscripciones.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Suscripciones]
+      summary: Crear suscripción
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/SuscripcionCreate" }
+      responses:
+        "201":
+          description: Suscripción creada.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  suscripcion: { $ref: "#/components/schemas/Suscripcion" }
+        "400":
+          description: Faltan campos o fechas inválidas.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario o tipo de usuario no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /suscripciones/{id}:
+    get:
+      tags: [Suscripciones]
+      summary: Obtener suscripción por ID
+      parameters:
+        - $ref: "#/components/parameters/PathId"
+      responses:
+        "200":
+          description: Suscripción encontrada.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Suscripcion" }
+        "404":
+          description: No se encontró la suscripción.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /metodos-pago:
+    get:
+      tags: ["Métodos de Pago"]
+      summary: Listar métodos de pago por usuario
+      parameters:
+        - in: query
+          name: usuarioId
+          required: true
+          schema: { type: integer }
+          description: ID del usuario.
+      responses:
+        "200":
+          description: Métodos de pago del usuario.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  metodosPago:
+                    type: array
+                    items: { $ref: "#/components/schemas/MetodoPago" }
+        "400":
+          description: Falta usuarioId.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario no encontrado o sin métodos.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: ["Métodos de Pago"]
+      summary: Crear método de pago
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/MetodoPagoCreate" }
+      responses:
+        "201":
+          description: Método de pago creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  metodoPago: { $ref: "#/components/schemas/MetodoPago" }
+        "400":
+          description: Faltan datos o tipo inválido.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario no encontrado.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
+  /pagos:
+    get:
+      tags: [Pagos]
+      summary: Listar pagos por usuario y rango de fechas (opcional)
+      parameters:
+        - in: query
+          name: usuarioId
+          required: true
+          schema: { type: integer }
+        - in: query
+          name: desde
+          schema: { type: string, format: date }
+          description: Fecha mínima (YYYY-MM-DD).
+        - in: query
+          name: hasta
+          schema: { type: string, format: date }
+          description: Fecha máxima (YYYY-MM-DD).
+      responses:
+        "200":
+          description: Lista de pagos.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  total: { type: integer }
+                  pagos:
+                    type: array
+                    items: { $ref: "#/components/schemas/Pago" }
+        "400":
+          description: Falta usuarioId.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario no encontrado o sin pagos.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/ErrorMessage" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+    post:
+      tags: [Pagos]
+      summary: Crear pago
+      parameters:
+        - in: query
+          name: usuarioId
+          required: true
+          schema: { type: integer }
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: "#/components/schemas/PagoCreate" }
+      responses:
+        "201":
+          description: Pago creado.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message: { type: string }
+                  pago: { $ref: "#/components/schemas/Pago" }
+        "400":
+          description: Faltan campos o importe inválido.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "404":
+          description: Usuario / suscripción / método de pago inexistente.
+          content:
+            application/json:
+              schema: { $ref: "#/components/schemas/Error" }
+        "500":
+          $ref: "#/components/responses/ServerError"
+
 components:
+  parameters:
+    PathId:
+      in: path
+      name: id
+      required: true
+      schema: { type: integer }
+
+  responses:
+    ServerError:
+      description: Error interno del servidor.
+      content:
+        application/json:
+          schema: { $ref: "#/components/schemas/Error" }
+
   schemas:
-    UsuarioCreate:
-      type: object
-      required:
-      - email
-      - password
-      - fecha_nac
-      - sexo
-      - id_pais
-      - tipo_usuario_actual
-      properties:
-        email:
-          type: string
-          format: email
-          example: ana.garcia@example.com
-        password:
-          type: string
-          minLength: 8
-          pattern: ^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]
-          example: Secr3t0!
-          description: Debe contener al menos una mayúscula, minúscula, número y carácter
-            especial
-          format: password
-        fecha_nac:
-          type: string
-          format: date
-          example: '1995-05-20'
-        sexo:
-          type: string
-          enum:
-          - M
-          - F
-          example: F
-        cp:
-          type: string
-          maxLength: 10
-          example: '4600'
-        id_pais:
-          type: integer
-          example: 1
-        tipo_usuario_actual:
-          type: integer
-          example: 2
-        nyap:
-          type: string
-    UsuarioResponse:
+    Message:
       type: object
       properties:
-        id_usuario:
-          type: integer
-          example: 1
-        email:
-          type: string
-          example: ana.garcia@example.com
-        fecha_nac:
-          type: string
-          format: date
-          example: '1995-05-20'
-        sexo:
-          type: string
-          example: F
-        cp:
-          type: string
-          example: '4600'
-        id_pais:
-          type: integer
-          example: 1
-        tipo_usuario_actual:
-          type: integer
-          example: 2
-        fecha_ult_mod_password:
-          type: string
-          format: date-time
-        activo:
-          type: boolean
-          example: true
-        fecha_creacion:
-          type: string
-          format: date-time
-    CancionPopularPorPais:
-      type: object
-      description: Resultado del EJERCICIO 1 - Canciones populares por país
-      properties:
-        nombre_cancion:
-          type: string
-          example: Mariposa Tecknicolor
-        nombre_artista:
-          type: string
-          example: Fito Páez
-        nombre_album:
-          type: string
-          example: El Amor Después Del Amor
-        nombre_pais:
-          type: string
-          example: Argentina
-        total_reproducciones:
-          type: integer
-          example: 1500000
-          description: Suma total de reproducciones de la canción
-        apariciones_en_playlists:
-          type: integer
-          example: 245
-          description: Número de playlists activas que contienen esta canción
-    IngresoPorArtistaDiscografica:
-      type: object
-      description: Resultado del EJERCICIO 2 - Ingresos por artista y discográfica
-      properties:
-        nombre_artista:
-          type: string
-          example: Fito Páez
-        nombre_discografica:
-          type: string
-          example: Sony Music Argentina
-        nombre_pais_discografica:
-          type: string
-          example: Argentina
-        total_ingresos:
-          type: number
-          format: decimal
-          example: 2547.85
-          description: Suma total de ingresos generados
-        cantidad_suscripciones_activas:
-          type: integer
-          example: 127
-          description: Número de suscripciones activas relacionadas
-        total_canciones:
-          type: integer
-          example: 45
-          description: Total de canciones del artista en la discográfica
-        promedio_reproducciones:
-          type: number
-          format: decimal
-          example: 125000.5
-          description: Promedio de reproducciones por canción
-    Pagination:
+        message: { type: string }
+
+    ErrorMessage:
       type: object
       properties:
-        page:
-          type: integer
-          example: 1
-          minimum: 1
-        limit:
-          type: integer
-          example: 20
-          minimum: 1
-        total:
-          type: integer
-          example: 150
-        pages:
-          type: integer
-          example: 8
-      required:
-      - page
-      - limit
-      - total
-      - pages
+        message: { type: string }
     Error:
       type: object
       properties:
-        error:
-          type: object
-          properties:
-            code:
-              type: string
-              example: VALIDATION_ERROR
-            message:
-              type: string
-              example: Datos de entrada inválidos
-            details:
-              oneOf:
-              - type: string
-              - type: array
-                items:
-                  type: string
-              example: El email es obligatorio
+        error: { type: string }
+        description:
+          type: string
+          nullable: true
+
+    Pagination:
+      type: object
+      properties:
+        page: { type: integer }
+        limit: { type: integer }
+        total: { type: integer }
+        pages: { type: integer }
+
     Usuario:
       type: object
-      required:
-      - id_usuario
-      - nyap
-      - email
-      - fecha_nac
-      - sexo
-      - cp
-      - id_pais
-      - tipo_usuario_actual
       properties:
-        id_usuario:
+        id_usuario: { type: integer }
+        nyap: { type: string }
+        email: { type: string, format: email }
+        fecha_nac: { type: string, format: date }
+        sexo: { type: string }
+        cp: { type: string }
+        id_pais: { type: integer }
+        tipo_usuario_actual: { type: integer }
+    UsuarioCreate:
+      type: object
+      required: [nyap, email, password, fecha_nac, sexo, cp, id_pais, tipo_usuario_actual]
+      properties:
+        nyap: { type: string }
+        email: { type: string, format: email }
+        password: { type: string, format: password }
+        fecha_nac: { type: string, format: date }
+        sexo: { type: string }
+        cp: { type: string }
+        id_pais: { type: integer }
+        tipo_usuario_actual: { type: integer }
+    UsuarioUpdate:
+      type: object
+      properties:
+        nyap: { type: string }
+        email: { type: string, format: email }
+        fecha_nac: { type: string, format: date }
+        sexo: { type: string }
+        cp: { type: string }
+        id_pais: { type: integer }
+        tipo_usuario_actual: { type: integer }
+
+    Artista:
+      type: object
+      properties:
+        id_artista: { type: integer }
+        nombre: { type: string }
+        imagen_url: { type: string, nullable: true }
+    ArtistaCreate:
+      type: object
+      required: [nombre]
+      properties:
+        nombre: { type: string }
+        imagen_url: { type: string, nullable: true }
+
+    Genero:
+      type: object
+      properties:
+        id_genero: { type: integer }
+        nombre: { type: string }
+    GeneroCreate:
+      type: object
+      required: [nombre]
+      properties:
+        nombre: { type: string }
+
+    Album:
+      type: object
+      properties:
+        id_album: { type: integer }
+        titulo: { type: string }
+        id_artista: { type: integer }
+        id_discografica: { type: integer }
+        anio_publicacion: { type: integer }
+        duracion_total_seg:
           type: integer
-          example: 123
-        nyap:
-          type: string
-          example: María García
-        email:
-          type: string
-          format: email
-          example: maria@example.com
-        fecha_nac:
-          type: string
-          format: date
-          example: '1998-07-15'
-        sexo:
-          type: string
-          enum:
-          - M
-          - F
-          - X
-          example: F
-        cp:
-          type: string
-          example: '1405'
-        id_pais:
+          nullable: true
+    AlbumCreate:
+      type: object
+      required: [titulo, id_artista, id_discografica, anio_publicacion]
+      properties:
+        titulo: { type: string }
+        id_artista: { type: integer }
+        id_discografica: { type: integer }
+        anio_publicacion: { type: integer }
+        duracion_total_seg:
           type: integer
-          example: 1
-        tipo_usuario_actual:
+          nullable: true
+
+    Cancion:
+      type: object
+      properties:
+        id_cancion: { type: integer }
+        titulo: { type: string }
+        duracion_seg: { type: integer }
+        id_album: { type: integer }
+        reproducciones: { type: integer, nullable: true }
+        likes: { type: integer, nullable: true }
+    CancionCreate:
+      type: object
+      required: [titulo, duracion_seg, id_album]
+      properties:
+        titulo: { type: string }
+        duracion_seg: { type: integer, minimum: 1 }
+        id_album: { type: integer }
+        reproducciones: { type: integer, nullable: true }
+        likes: { type: integer, nullable: true }
+    CancionUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        duracion_seg: { type: integer, minimum: 1 }
+        id_album: { type: integer }
+        reproducciones: { type: integer }
+        likes: { type: integer }
+
+    Playlist:
+      type: object
+      properties:
+        id_playlist: { type: integer }
+        titulo: { type: string }
+        id_usuario: { type: integer }
+        cant_canciones: { type: integer }
+        estado: { type: string, enum: ["Activa", "Eliminada", "activa", "eliminada"] }
+        fecha_creacion: { type: string, format: date-time }
+        fecha_eliminada: { type: string, format: date-time, nullable: true }
+    PlaylistCreate:
+      type: object
+      required: [titulo, id_usuario]
+      properties:
+        titulo: { type: string }
+        id_usuario: { type: integer }
+    PlaylistUpdate:
+      type: object
+      properties:
+        titulo: { type: string }
+        estado:
           type: string
-          example: premium
-        fecha_ult_mod_password:
+          enum: ["Activa", "Eliminada", "activa", "eliminada"]
+        fecha_eliminada:
           type: string
           format: date-time
           nullable: true
-          example: '2025-07-01T18:32:15Z'
-    UsuarioUpdate:
+    PlaylistSongAdd:
       type: object
-      additionalProperties: false
+      required: [id_cancion]
       properties:
-        nyap:
-          type: string
-        email:
-          type: string
-          format: email
-        fecha_nac:
-          type: string
-          format: date
-        sexo:
-          type: string
-          enum:
-          - M
-          - F
-          - X
-        cp:
-          type: string
-        id_pais:
+        id_cancion: { type: integer }
+        orden:
           type: integer
-        tipo_usuario_actual:
-          type: string
-    UsuariosListResponse:
-      type: object
-      required:
-      - usuarios
-      - pagination
-      properties:
-        usuarios:
-          type: array
-          items:
-            $ref: '#/components/schemas/Usuario'
-        pagination:
-          $ref: '#/components/schemas/Pagination'
-    MensajeResponse:
-      type: object
-      required:
-      - message
-      properties:
-        message:
-          type: string
-    ErrorResponse:
-      type: object
-      required:
-      - error
-      properties:
-        error:
-          type: string
-        description:
-          type: string
-        path:
-          type: string
-        method:
-          type: string
-    UsuarioCreadoResponse:
-      type: object
-      required:
-      - message
-      - usuarioNuevo
-      properties:
-        message:
-          type: string
-          example: Usuario creado correctamente
-        usuarioNuevo:
-          $ref: '#/components/schemas/Usuario'
-    UsuarioActualizadoResponse:
-      type: object
-      required:
-      - message
-      - usuario
-      properties:
-        message:
-          type: string
-          example: Usuario actualizado correctamente
-        usuario:
-          $ref: '#/components/schemas/Usuario'
-    PasswordVencidasResponse:
-      type: object
-      required:
-      - message
-      - total
-      - dias_limite
-      - usuarios
-      properties:
-        message:
-          type: string
-          example: Usuarios con contraseñas vencidas (más de 90 días)
-        total:
-          type: integer
-          example: 2
-        dias_limite:
-          type: integer
-          example: 90
-        usuarios:
-          type: array
-          items:
-            type: object
-            required:
-            - id_usuario
-            - nyap
-            - email
-            properties:
-              id_usuario:
-                type: integer
-              nyap:
-                type: string
-              email:
-                type: string
-                format: email
-              fecha_ult_mod_password:
-                type: string
-                format: date-time
-                nullable: true
-  responses:
-    BadRequest:
-      description: Solicitud inválida
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error:
-              code: VALIDATION_ERROR
-              message: Datos de entrada inválidos
-              details:
-              - El email es obligatorio
-              - La contraseña debe tener al menos 8 caracteres
-    Conflict:
-      description: Conflicto - Recurso duplicado
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error:
-              code: DUPLICATE_ENTRY
-              message: El registro ya existe
-              details: El email ya está registrado
-    NotFound:
-      description: Recurso no encontrado
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error:
-              code: NOT_FOUND
-              message: Recurso no encontrado
-              details: El usuario especificado no existe
-    InternalServerError:
-      description: Error interno del servidor
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          example:
-            error:
-              code: INTERNAL_SERVER_ERROR
-              message: Error interno del servidor
-              details: Error interno
-    NotFoundUsuario:
-      description: Usuario no encontrado
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/MensajeResponse'
-          examples:
-            notFound:
-              value:
-                message: No se encontró el usuario
-    ValidationError:
-      description: Error de validación o FK
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/ErrorResponse'
-  securitySchemes:
-    BearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-      description: 'Token JWT para autenticación (implementación opcional).
+          nullable: true
 
+    Suscripcion:
+      type: object
+      properties:
+        id_suscripcion: { type: integer }
+        id_usuario: { type: integer }
+        tipo_usuario: { type: integer }
+        fecha_inicio: { type: string, format: date-time }
+        fecha_renovacion: { type: string, format: date-time }
+    SuscripcionCreate:
+      type: object
+      required: [id_usuario, tipo_usuario, fecha_inicio, fecha_renovacion]
+      properties:
+        id_usuario: { type: integer }
+        tipo_usuario: { type: integer }
+        fecha_inicio: { type: string, format: date-time }
+        fecha_renovacion: { type: string, format: date-time }
 
-        Ejemplo de uso:
+    MetodoPago:
+      type: object
+      properties:
+        id_metodo_pago: { type: integer }
+        id_usuario: { type: integer }
+        tipo_forma_pago:
+          type: string
+          enum: ["Credito", "Debito", "Efectivo", "Debito Automatico x Banco"]
+        cbu: { type: string, nullable: true }
+        banco_codigo: { type: integer }
+        nro_tarjeta_masc: { type: string, nullable: true }
+        mes_caduca: { type: integer, nullable: true }
+        anio_caduca: { type: integer, nullable: true }
+    MetodoPagoCreate:
+      type: object
+      required: [id_usuario, tipo_forma_pago]
+      properties:
+        id_usuario: { type: integer }
+        tipo_forma_pago:
+          type: string
+          enum: ["Credito", "Debito", "Efectivo", "Debito Automatico x Banco"]
+        cbu: { type: string, nullable: true }
+        nro_tarjeta: { type: string, nullable: true, description: "Solo para Credito/Debito. Se enmascara automáticamente." }
+        mes_caduca: { type: integer, nullable: true }
+        anio_caduca: { type: integer, nullable: true }
+        banco_codigo: { type: integer, nullable: true }
 
-        ```
-
-        Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
-
-        ```
-
-        '
-  parameters:
-    PageParam:
-      name: page
-      in: query
-      description: Número de página (1..N)
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        default: 1
-    LimitParam:
-      name: limit
-      in: query
-      description: Cantidad de items por página
-      required: false
-      schema:
-        type: integer
-        minimum: 1
-        maximum: 200
-        default: 20
-    IdUsuarioParam:
-      name: id
-      in: path
-      required: true
-      description: ID de usuario
-      schema:
-        type: integer
-        minimum: 1
-    DiasParam:
-      name: dias
-      in: query
-      required: false
-      description: Días sin modificar contraseña para considerar 'vencida' (default
-        90)
-      schema:
-        type: integer
-        minimum: 1
-        default: 90
+    Pago:
+      type: object
+      properties:
+        id_pago: { type: integer }
+        id_usuario: { type: integer }
+        id_suscripcion: { type: integer }
+        id_metodo_pago: { type: integer }
+        importe: { type: number, format: float }
+        fecha_pago: { type: string, format: date-time }
+    PagoCreate:
+      type: object
+      required: [id_suscripcion, id_metodo_pago, importe]
+      properties:
+        id_suscripcion: { type: integer }
+        id_metodo_pago: { type: integer }
+        importe: { type: number, format: float, minimum: 0 }
