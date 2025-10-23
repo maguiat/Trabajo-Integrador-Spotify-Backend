@@ -7,9 +7,20 @@ process.loadEnvFile()
 // GET /usuarios (lista)
 getAllUsuarios = async (req, res, next) => {
   try {
-    const usuarios = await Usuario.findAll({
+    // --- Paginación ---
+    let { page = 1, limit = 20 } = req.query
+    page = parseInt(page)
+    limit = parseInt(limit)
+    const offset = (page - 1) * limit
+
+    const usuarios = await Usuario.findAll({  
+      offset,
+      limit,
       order: [["id_usuario", "DESC"]],
+      attributes: { exclude: ['password_hash'] }
     })
+
+    const total = await Usuario.count()
 
     // --- Validar si hay usuarios ---
     if (usuarios.length === 0) {
@@ -20,7 +31,15 @@ getAllUsuarios = async (req, res, next) => {
 
     // --- Devolver resultados ---
     console.log(chalk.green(`Usuarios obtenidos correctamente`))
-    res.json(usuarios)
+    return res.status(200).json({
+      usuarios,
+      pagination: {
+        page,
+        limit,
+        total,
+        pages: Math.ceil(total / limit),
+      },
+    })
   } catch (error) {
     return next(error)
   }
@@ -30,7 +49,9 @@ getAllUsuarios = async (req, res, next) => {
 getUsuarioByID = async (req, res, next) => {
   const { id } = req.params
   try {
-    const usuario = await Usuario.findByPk(id)
+    const usuario = await Usuario.findByPk(id, {
+      attributes: { exclude: ['password_hash'] }
+    })
 
     // --- Validar que el usuario exista ---
     if (!usuario) {
@@ -108,9 +129,14 @@ crearUsuario = async (req, res, next) => {
       tipo_usuario_actual,
     })
 
+    // --- Usuario para mostrar (sin password_hash) ---
+    const usuarioNuevo = await Usuario.findByPk(usuario.id_usuario, {
+      attributes: { exclude: ['password_hash'] }
+    })
+
     // --- Devolver resultados ---
     console.log(chalk.green(`Usuario creado correctamente`))
-    res.status(201).json({ message: "Usuario creado correctamente", usuario })
+    res.status(201).json({ message: "Usuario creado correctamente", usuarioNuevo })
   } catch (error) {
     next(error)
   }
@@ -153,7 +179,9 @@ updateUsuario = async (req, res, next) => {
       id_pais,
       tipo_usuario_actual
     })
-    const usuarioActualizado = await Usuario.findByPk(id)
+    const usuarioActualizado = await Usuario.findByPk(id, {
+      attributes: { exclude: ['password_hash'] }
+    })
 
     // --- Devolver resultados ---
     console.log(chalk.green(`Usuario ${id} actualizado correctamente`))

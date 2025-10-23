@@ -3,6 +3,9 @@
 @baseUrl = http://localhost:3000/api/v1
 @json = application/json
 
+### Obtener usuarios
+GET {{baseUrl}}/usuarios?page=1&limit=20
+
 ### Crear usuario
 POST {{baseUrl}}/usuarios
 Content-Type: {{json}}
